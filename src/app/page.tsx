@@ -49,7 +49,7 @@ export default function HomePage() {
           {/* Main content area: Pushes content (hive) to the bottom and adds padding */}
           <main className="flex flex-col items-center justify-end p-4 pb-8 min-h-[calc(100%-100px)] relative">
             {/* Increased margin-top to move the hive further down */}
-            <div className="text-center mt-8">
+            <div className="text-center mt-9">
               <div className="relative inline-block">
                 <Image
                   src="/assets/images/hive.png"
