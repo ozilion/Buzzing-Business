@@ -2,7 +2,7 @@
 "use client";
 
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TopResourceDisplay } from '@/app/(components)/TopResourceDisplay';
 import { MarketModal } from '@/app/(components)/MarketModal';
 import { AIOptimizationModal } from '@/app/(components)/AIOptimizationModal';
@@ -50,18 +50,15 @@ const flowersData = Array.from({ length: 18 }).map((_, index) => {
     id: `flower-${index}`,
     src: flowerImagePaths[typeIndex],
     alt: `Animated flower type ${typeIndex + 1}`,
-    className: `${style.size} ${style.rotate} transform z-10`, // Added z-10
+    className: `${style.size} ${style.rotate} transform z-10`,
     style: { top: style.top, left: style.left, position: 'absolute' as const },
   };
 });
 
-// Define bee flight path coordinates (relative to the main content area)
-// These are approximate and might need fine-tuning
-// Assuming main content area width ~380px, height ~600px for content
-const HIVE_POINT = { x: 175, y: 380 }; // Adjusted for bee size (30x30), near hive center
-const FLOWER_POINT_1 = { x: 70, y: 480 }; // Lower-left flower area
-const FLOWER_POINT_2 = { x: 180, y: 530 }; // Lower-mid flower area
-const FLOWER_POINT_3 = { x: 290, y: 490 }; // Lower-right flower area
+const HIVE_POINT = { x: 175, y: 380 };
+const FLOWER_POINT_1 = { x: 70, y: 480 };
+const FLOWER_POINT_2 = { x: 180, y: 530 };
+const FLOWER_POINT_3 = { x: 290, y: 490 };
 
 const flightPath = [
   HIVE_POINT,
@@ -71,7 +68,7 @@ const flightPath = [
 ];
 
 const FLIGHT_DURATION = 2000; // 2 seconds to fly
-const STAY_DURATION = 1500; // 1.5 seconds at flower/hive
+const STAY_DURATION = 2000; // 2 seconds at flower/hive
 
 export default function HomePage() {
   const {
@@ -86,6 +83,7 @@ export default function HomePage() {
 
   const [beePosition, setBeePosition] = useState(HIVE_POINT);
   const [currentPathIndex, setCurrentPathIndex] = useState(0);
+  const initialCycleRef = useRef(true);
 
   useEffect(() => {
     setDisplayWorkerBees(contextWorkerBees);
@@ -94,24 +92,23 @@ export default function HomePage() {
   }, [contextWorkerBees, contextHiveLevel, contextHoneyProductionRate]);
 
   useEffect(() => {
-    const animateBee = () => {
-      // Set target position for the bee
-      setBeePosition(flightPath[currentPathIndex]);
+    setBeePosition(flightPath[currentPathIndex]);
 
-      // Determine next index
-      const nextIndex = (currentPathIndex + 1) % flightPath.length;
+    const nextIndex = (currentPathIndex + 1) % flightPath.length;
+    let delay;
 
-      // Schedule next movement
-      const timer = setTimeout(() => {
-        setCurrentPathIndex(nextIndex);
-      }, FLIGHT_DURATION + STAY_DURATION);
+    if (initialCycleRef.current && currentPathIndex === 0) {
+      delay = STAY_DURATION; // Only stay duration for the first time at hive
+      initialCycleRef.current = false; 
+    } else {
+      delay = FLIGHT_DURATION + STAY_DURATION; // Fly and then stay
+    }
+    
+    const timer = setTimeout(() => {
+      setCurrentPathIndex(nextIndex);
+    }, delay);
 
-      return () => clearTimeout(timer);
-    };
-
-    const animationTimeoutId = animateBee();
-    return () => clearTimeout(animationTimeoutId); // Clear timeout if component unmounts or index changes
-
+    return () => clearTimeout(timer);
   }, [currentPathIndex]);
 
 
@@ -197,3 +194,4 @@ export default function HomePage() {
     </div>
   );
 }
+
