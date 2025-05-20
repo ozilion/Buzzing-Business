@@ -40,7 +40,7 @@ export function HiveManagementCard() {
     setDisplayHiveLevel(contextHiveLevel);
     setDisplayCurrentHoneyProductionRate(contextHoneyProductionRate);
     setDisplayNextUpgradeCost(
-      BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, contextHiveLevel - 1)
+      BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, contextHiveLevel -1)
     );
   }, [contextWorkerBees, contextHiveLevel, contextHoneyProductionRate]);
 
@@ -56,21 +56,21 @@ export function HiveManagementCard() {
       <CardContent className="space-y-6">
         <div className="relative w-full h-48 rounded-md overflow-hidden mb-4">
             <Image
-              src="/assets/scene.png"
-              alt="Beehive scene"
+              src="https://placehold.co/600x250.png"
+              alt="Flower meadow with beehives"
               layout="fill"
               objectFit="cover"
               className="z-0"
-              data-ai-hint="nature landscape"
+              data-ai-hint="flower meadow beehives"
             />
             <div className="absolute inset-0 flex items-center justify-center z-10">
               <div className="relative w-32 h-32"> 
                 <Image
-                  src="/assets/hive.png"
-                  alt="Beehive"
+                  src="https://placehold.co/128x128.png"
+                  alt="Central Beehive"
                   layout="fill"
                   objectFit="contain"
-                  data-ai-hint="beehive"
+                  data-ai-hint="beehive focused"
                 />
               </div>
             </div>
@@ -89,7 +89,7 @@ export function HiveManagementCard() {
           </div>
         </div>
 
-        <div className="text-center p-3 bg-accent/10 rounded-lg">
+        <div className="text-center p-3 bg-secondary/50 rounded-lg">
             <p className="text-sm font-medium text-muted-foreground">Honey Production</p>
             <p className="text-lg font-semibold text-foreground">{displayCurrentHoneyProductionRate.toFixed(2)} units/hour</p>
         </div>
