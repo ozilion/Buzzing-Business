@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import {
   Dialog,
   DialogContent,
@@ -15,11 +16,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useGame } from '@/app/(context)/GameContext';
-import { TrendingUp, ShoppingCart, Banknote, Layers, Flower2, Gem } from 'lucide-react'; 
+import { TrendingUp, ShoppingCart, Banknote, Gem, Layers } from 'lucide-react'; 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { INITIAL_HONEY_PRICE, INITIAL_POLLEN_PRICE, INITIAL_PROPOLIS_PRICE } from '@/lib/constants';
 
 type ResourceTab = "honey" | "pollen" | "propolis";
+
+const POLLEN_ICON_URL = "https://cdn-icons-png.freepik.com/256/1728/1728708.png";
 
 export function MarketModal() {
   const { 
@@ -100,7 +103,7 @@ export function MarketModal() {
   
   const getResourceIcon = (resource: ResourceTab) => {
     if (resource === "honey") return <Banknote className="mr-2 h-4 w-4" />;
-    if (resource === "pollen") return <Flower2 className="mr-2 h-4 w-4" />;
+    if (resource === "pollen") return <Image src={POLLEN_ICON_URL} alt="Pollen" width={16} height={16} className="mr-2 h-4 w-4" />;
     if (resource === "propolis") return <Gem className="mr-2 h-4 w-4" />;
     return null;
   }

@@ -21,6 +21,12 @@ const nextConfig: NextConfig = {
         hostname: 'cdn.pixabay.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn-icons-png.freepik.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
