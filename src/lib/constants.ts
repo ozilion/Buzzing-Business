@@ -12,21 +12,21 @@ export const INITIAL_PROPOLIS_PRICE = 15; // BeeCoins per unit of propolis
 
 // Realistic Production Rates (per second, assuming 'units' are balanced for gameplay)
 // Honey: (workerBees * baseBeeProd + hiveLevel * baseHiveProd)
-export const BASE_HONEY_PRODUCTION_PER_BEE_PER_SECOND = 0.002;
-export const HONEY_PRODUCTION_HIVE_LEVEL_MULTIPLIER_PER_SECOND = 0.001;
+export const BASE_HONEY_PRODUCTION_PER_BEE_PER_SECOND = 0.002; // Increased from 0.0005
+export const HONEY_PRODUCTION_HIVE_LEVEL_MULTIPLIER_PER_SECOND = 0.001; // Increased from 0.0002
 
 // Pollen: (workerBees * baseBeeProd + hiveLevel * baseHiveProd)
-export const BASE_POLLEN_PRODUCTION_PER_BEE_PER_SECOND = 0.001;
-export const POLLEN_PRODUCTION_HIVE_LEVEL_MULTIPLIER_PER_SECOND = 0.0005;
+export const BASE_POLLEN_PRODUCTION_PER_BEE_PER_SECOND = 0.001; // New, was 0.0001
+export const POLLEN_PRODUCTION_HIVE_LEVEL_MULTIPLIER_PER_SECOND = 0.0005; // New, was 0.00005
 
 // Propolis: (hiveLevel * baseHiveProd)
-export const BASE_PROPOLIS_PRODUCTION_PER_HIVE_LEVEL_PER_SECOND = 0.0002;
+export const BASE_PROPOLIS_PRODUCTION_PER_HIVE_LEVEL_PER_SECOND = 0.0002; // New, was 0.00002
 
 
 export const POLLEN_CHANCE_ON_COLLECT = 0.1; // 10% chance to get 1 pollen
 export const PROPOLIS_CHANCE_ON_COLLECT = 0.05; // 5% chance to get 1 propolis
 
-export const HIVE_UPGRADE_COST_MULTIPLIER = 1.5; // Cost increases by 50% per level
+export const HIVE_UPGRADE_COST_MULTIPLIER = 1.3; // Cost increases by 30% per level (Changed from 1.5)
 export const BASE_HIVE_UPGRADE_COST = 50; // BeeCoins for level 2
 
 export const WORKER_BEE_COST = 20; // BeeCoins per worker bee
@@ -54,3 +54,4 @@ export const MARKET_POLLEN_PRICE_MAX = 10;
 
 export const MARKET_PROPOLIS_PRICE_MIN = 10;
 export const MARKET_PROPOLIS_PRICE_MAX = 30;
+
