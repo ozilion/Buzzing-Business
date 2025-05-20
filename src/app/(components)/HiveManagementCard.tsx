@@ -14,7 +14,6 @@ import {
   INITIAL_HIVE_LEVEL,
   INITIAL_WORKER_BEES,
   BASE_PRODUCTION_PER_BEE_PER_SECOND,
-  INITIAL_HONEY_PRICE // Added for calculating initial upgrade cost correctly
 } from '@/lib/constants';
 
 export function HiveManagementCard() {
@@ -27,7 +26,6 @@ export function HiveManagementCard() {
     addWorkerBees 
   } = useGame();
 
-  // State for values to display, initialized to match server-rendered output
   const [displayWorkerBees, setDisplayWorkerBees] = useState(INITIAL_WORKER_BEES);
   const [displayHiveLevel, setDisplayHiveLevel] = useState(INITIAL_HIVE_LEVEL);
   const [displayCurrentHoneyProductionRate, setDisplayCurrentHoneyProductionRate] = useState(
@@ -37,12 +35,10 @@ export function HiveManagementCard() {
     BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, INITIAL_HIVE_LEVEL - 1)
   );
 
-  // Effect to update display values after client-side hydration and context updates
   useEffect(() => {
     setDisplayWorkerBees(contextWorkerBees);
     setDisplayHiveLevel(contextHiveLevel);
     setDisplayCurrentHoneyProductionRate(contextHoneyProductionRate);
-    // Recalculate next upgrade cost based on the context hive level
     setDisplayNextUpgradeCost(
       BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, contextHiveLevel - 1)
     );
@@ -59,20 +55,18 @@ export function HiveManagementCard() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="relative w-full h-48 rounded-md overflow-hidden mb-4">
-            {/* Background Image */}
             <Image
-              src="/images/scene.png"
+              src="/assets/scene.png"
               alt="Beehive scene"
               layout="fill"
               objectFit="cover"
               className="z-0"
               data-ai-hint="nature landscape"
             />
-            {/* Overlay Image Container */}
             <div className="absolute inset-0 flex items-center justify-center z-10">
-              <div className="relative w-32 h-32"> {/* Adjust size as needed */}
+              <div className="relative w-32 h-32"> 
                 <Image
-                  src="/images/hive.png"
+                  src="/assets/hive.png"
                   alt="Beehive"
                   layout="fill"
                   objectFit="contain"

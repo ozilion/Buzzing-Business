@@ -1,3 +1,4 @@
+
 import type { OptimizeHoneyProductionInput, OptimizeHoneyProductionOutput } from '@/ai/flows/optimize-honey-production';
 
 export interface GameState {
@@ -9,6 +10,8 @@ export interface GameState {
   workerBees: number;
   lastUpdated: number;
   honeyPrice: number;
+  pollenPrice: number;
+  propolisPrice: number;
   currentHoneyProductionRate: number; // units per hour
 }
 
@@ -18,6 +21,8 @@ export interface GameContextType extends GameState {
   addWorkerBees: (amount: number) => void;
   sellHoney: (amount: number) => void;
   buyHoney: (amount: number) => void;
+  sellPollen: (amount: number) => void;
+  sellPropolis: (amount: number) => void;
   getAIOptimization: (input: OptimizeHoneyProductionInput) => Promise<OptimizeHoneyProductionOutput>;
 }
 

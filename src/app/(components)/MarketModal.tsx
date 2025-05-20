@@ -15,17 +15,47 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useGame } from '@/app/(context)/GameContext';
-import { TrendingUp, ShoppingCart, Banknote, Repeat, Layers } from 'lucide-react'; // Added Layers for Sell All
+import { TrendingUp, ShoppingCart, Banknote, Layers, Flower2, Gem } from 'lucide-react'; 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { INITIAL_HONEY_PRICE, INITIAL_POLLEN_PRICE, INITIAL_PROPOLIS_PRICE } from '@/lib/constants';
+
+type ResourceTab = "honey" | "pollen" | "propolis";
 
 export function MarketModal() {
-  const { honey, beeCoins, honeyPrice, sellHoney, buyHoney } = useGame();
+  const { 
+    honey, 
+    pollen, 
+    propolis, 
+    beeCoins, 
+    honeyPrice, 
+    pollenPrice, 
+    propolisPrice, 
+    sellHoney, 
+    buyHoney, 
+    sellPollen, 
+    sellPropolis 
+  } = useGame();
+  
   const [amount, setAmount] = useState<number>(1);
   const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<ResourceTab>("honey");
   
-  const [clientHoneyPrice, setClientHoneyPrice] = useState<number | null>(null);
+  const [clientHoneyPrice, setClientHoneyPrice] = useState<number>(INITIAL_HONEY_PRICE);
+  const [clientPollenPrice, setClientPollenPrice] = useState<number>(INITIAL_POLLEN_PRICE);
+  const [clientPropolisPrice, setClientPropolisPrice] = useState<number>(INITIAL_PROPOLIS_PRICE);
+
   useEffect(() => {
-    setClientHoneyPrice(honeyPrice);
-  }, [honeyPrice]);
+    if (isOpen) {
+      setClientHoneyPrice(honeyPrice);
+      setClientPollenPrice(pollenPrice);
+      setClientPropolisPrice(propolisPrice);
+      setAmount(1); // Reset amount when modal opens or tab changes
+    }
+  }, [isOpen, honeyPrice, pollenPrice, propolisPrice]);
+
+ useEffect(() => {
+    setAmount(1); // Reset amount when tab changes
+  }, [activeTab]);
 
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,87 +64,128 @@ export function MarketModal() {
   };
 
   const handleSell = () => {
-    sellHoney(amount);
+    if (activeTab === "honey") sellHoney(amount);
+    else if (activeTab === "pollen") sellPollen(amount);
+    else if (activeTab === "propolis") sellPropolis(amount);
     setAmount(1);
   };
 
-  const handleBuy = () => {
-    buyHoney(amount);
-    setAmount(1);
-  };
-
-  const handleSellAll = () => {
-    if (honey > 0) {
-      sellHoney(honey); // Sell all available honey
-      setAmount(1); // Reset amount input
+  const handleBuy = () => { // Buy is only for honey
+    if (activeTab === "honey") {
+      buyHoney(amount);
+      setAmount(1);
     }
   };
 
-  if (clientHoneyPrice === null) {
-    return (
-      <Button variant="outline" disabled>
-        <ShoppingCart className="mr-2 h-4 w-4" /> Loading Market...
-      </Button>
-    );
+  const handleSellAll = () => {
+    if (activeTab === "honey" && honey > 0) sellHoney(honey);
+    else if (activeTab === "pollen" && pollen > 0) sellPollen(pollen);
+    else if (activeTab === "propolis" && propolis > 0) sellPropolis(propolis);
+    setAmount(1); 
+  };
+
+  const getCurrentResourceAmount = () => {
+    if (activeTab === "honey") return honey;
+    if (activeTab === "pollen") return pollen;
+    if (activeTab === "propolis") return propolis;
+    return 0;
+  };
+
+  const getCurrentResourcePrice = () => {
+    if (activeTab === "honey") return clientHoneyPrice;
+    if (activeTab === "pollen") return clientPollenPrice;
+    if (activeTab === "propolis") return clientPropolisPrice;
+    return 0;
+  };
+  
+  const getResourceIcon = (resource: ResourceTab) => {
+    if (resource === "honey") return <Banknote className="mr-2 h-4 w-4" />;
+    if (resource === "pollen") return <Flower2 className="mr-2 h-4 w-4" />;
+    if (resource === "propolis") return <Gem className="mr-2 h-4 w-4" />;
+    return null;
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
-          <ShoppingCart className="mr-2 h-4 w-4" /> Visit Honey Market
+          <ShoppingCart className="mr-2 h-4 w-4" /> Visit Market
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md"> {/* Adjusted max-width slightly for better fit */}
+      <DialogContent className="sm:max-w-lg"> 
         <DialogHeader>
           <DialogTitle className="flex items-center">
-            <ShoppingCart className="mr-2 h-5 w-5 text-primary" /> Honey Market
+            <ShoppingCart className="mr-2 h-5 w-5 text-primary" /> Resource Market
           </DialogTitle>
           <DialogDescription>
-            Buy or sell honey. Prices fluctuate! Current price: 
-            <span className="font-semibold text-primary"> {clientHoneyPrice} BeeCoins</span> per unit.
+            Buy or sell resources. Prices fluctuate! 
+            Your BeeCoins: <span className="font-semibold text-primary">{beeCoins}</span>
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-6 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="amount" className="text-right col-span-1">
-              Amount
-            </Label>
-            <Input
-              id="amount"
-              type="number"
-              value={amount}
-              onChange={handleAmountChange}
-              className="col-span-3"
-              min="1"
-            />
+
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ResourceTab)} className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="honey">Honey</TabsTrigger>
+            <TabsTrigger value="pollen">Pollen</TabsTrigger>
+            <TabsTrigger value="propolis">Propolis</TabsTrigger>
+          </TabsList>
+
+          <div className="py-4">
+            <div className="grid grid-cols-4 items-center gap-4 mb-4">
+              <Label htmlFor="amount" className="text-right col-span-1">
+                Amount
+              </Label>
+              <Input
+                id="amount"
+                type="number"
+                value={amount}
+                onChange={handleAmountChange}
+                className="col-span-3"
+                min="1"
+              />
+            </div>
+            <div className="text-sm text-muted-foreground text-center mb-2">
+              Selected: <span className="capitalize font-semibold text-primary">{activeTab}</span> | 
+              Available: <span className="font-semibold text-primary">{getCurrentResourceAmount().toFixed(activeTab === 'honey' ? 2 : 0)}</span> | 
+              Price: <span className="font-semibold text-primary">{getCurrentResourcePrice()}</span> Coins/unit
+            </div>
           </div>
-          <div className="text-sm text-muted-foreground text-center">
-            You have <span className="font-semibold text-primary">{honey.toFixed(2)}</span> Honey and <span className="font-semibold text-primary">{beeCoins}</span> BeeCoins.
-          </div>
-        </div>
-        <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end"> {/* Allow wrapping */}
+          
+          <TabsContent value="honey">
+            {/* Content specific to honey tab, if any, beyond the shared input and buttons below */}
+          </TabsContent>
+          <TabsContent value="pollen">
+            {/* Content specific to pollen tab */}
+          </TabsContent>
+          <TabsContent value="propolis">
+            {/* Content specific to propolis tab */}
+          </TabsContent>
+        </Tabs>
+        
+        <DialogFooter className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-end gap-2 pt-2">
+          {activeTab === "honey" && (
+            <Button 
+              onClick={handleBuy} 
+              className="w-full sm:flex-1 bg-green-600 hover:bg-green-700 text-white"
+              disabled={beeCoins < amount * getCurrentResourcePrice()}
+            >
+              <TrendingUp className="mr-2 h-4 w-4" /> Buy ({Math.floor(amount * getCurrentResourcePrice())} Coins)
+            </Button>
+          )}
           <Button 
             onClick={handleSellAll} 
             variant="outline" 
-            className="w-full sm:w-auto"
-            disabled={honey <= 0}
+            className="w-full sm:flex-1"
+            disabled={getCurrentResourceAmount() <= 0}
           >
-            <Layers className="mr-2 h-4 w-4" /> Sell All ({Math.floor(honey * clientHoneyPrice)} Coins)
-          </Button>
-          <Button 
-            onClick={handleBuy} 
-            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
-            disabled={beeCoins < amount * clientHoneyPrice}
-          >
-            <TrendingUp className="mr-2 h-4 w-4" /> Buy ({amount * clientHoneyPrice} Coins)
+            <Layers className="mr-2 h-4 w-4" /> Sell All ({Math.floor(getCurrentResourceAmount() * getCurrentResourcePrice())} Coins)
           </Button>
           <Button 
             onClick={handleSell} 
-            className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
-            disabled={honey < amount}
+            className="w-full sm:flex-1 bg-red-600 hover:bg-red-700 text-white"
+            disabled={getCurrentResourceAmount() < amount}
           >
-            <Banknote className="mr-2 h-4 w-4" /> Sell (+{amount * clientHoneyPrice} Coins)
+            {getResourceIcon(activeTab)} Sell ({Math.floor(amount * getCurrentResourcePrice())} Coins)
           </Button>
         </DialogFooter>
       </DialogContent>

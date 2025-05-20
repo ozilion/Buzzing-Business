@@ -6,12 +6,13 @@
  * - optimizeHoneyProduction - A function that handles the honey production optimization process.
  * - OptimizeHoneyProductionInput - The input type for the optimizeHoneyProduction function.
  * - OptimizeHoneyProductionOutput - The return type for the optimizeHoneyProduction function.
+ * - OptimizeHoneyProductionInputSchema - The Zod schema for the input.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const OptimizeHoneyProductionInputSchema = z.object({
+export const OptimizeHoneyProductionInputSchema = z.object({
   hiveLevel: z.number().describe('The current level of the beehive.'),
   workerBeeCount: z.number().describe('The number of worker bees in the hive.'),
   flowerTypes: z
