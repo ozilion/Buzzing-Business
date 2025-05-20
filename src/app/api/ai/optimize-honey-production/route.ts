@@ -1,3 +1,4 @@
+
 import { NextResponse, type NextRequest } from 'next/server';
 import { optimizeHoneyProduction, OptimizeHoneyProductionInputSchema } from '@/ai/flows/optimize-honey-production';
 
