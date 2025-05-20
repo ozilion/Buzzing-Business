@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useGame } from '@/app/(context)/GameContext';
 import { ArrowUpCircle, PlusCircle, Home, Users, Info } from 'lucide-react';
-import { BASE_HIVE_UPGRADE_COST, HIVE_UPGRADE_COST_MULTIPLIER, WORKER_BEE_COST, INITIAL_HIVE_LEVEL } from '@/lib/constants';
+import { BASE_HIVE_UPGRADE_COST, HIVE_UPGRADE_COST_MULTIPLIER, WORKER_BEE_COST, INITIAL_HIVE_LEVEL, MAX_WORKER_BEES_INCREASE_PER_HIVE_LEVEL, BASE_MAX_WORKER_BEES } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function HiveActionsModal() {
@@ -22,6 +22,7 @@ export function HiveActionsModal() {
     beeCoins, 
     hiveLevel: contextHiveLevel, 
     workerBees: contextWorkerBees, 
+    maxWorkerBees: contextMaxWorkerBees,
     upgradeHive, 
     addWorkerBees 
   } = useGame();
@@ -31,6 +32,8 @@ export function HiveActionsModal() {
   const [displayNextUpgradeCost, setDisplayNextUpgradeCost] = useState(
     BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, INITIAL_HIVE_LEVEL -1)
   );
+  const [displayMaxWorkerBees, setDisplayMaxWorkerBees] = useState(BASE_MAX_WORKER_BEES + (INITIAL_HIVE_LEVEL -1) * MAX_WORKER_BEES_INCREASE_PER_HIVE_LEVEL);
+
 
   useEffect(() => {
     if (isOpen) {
@@ -38,15 +41,18 @@ export function HiveActionsModal() {
       setDisplayNextUpgradeCost(
         BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, contextHiveLevel -1)
       );
+      setDisplayMaxWorkerBees(contextMaxWorkerBees);
     }
-  }, [isOpen, contextHiveLevel]);
+  }, [isOpen, contextHiveLevel, contextMaxWorkerBees]);
 
   const handleUpgradeHive = () => {
     upgradeHive();
-    // Update cost immediately after upgrade attempt if modal stays open
-    setDisplayNextUpgradeCost(
-      BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, contextHiveLevel) // Use contextHiveLevel as it will be updated
-    );
+    // Recalculate cost for next level after attempted upgrade
+    // contextHiveLevel will be updated by useGame hook after successful upgrade
+    // For immediate UI feedback, we can predict the next cost based on current contextHiveLevel before it updates
+     setDisplayNextUpgradeCost(
+       BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, contextHiveLevel) // Use current contextHiveLevel for prediction
+     );
   };
 
   const handleAddBee = () => {
@@ -95,15 +101,18 @@ export function HiveActionsModal() {
               <CardTitle className="text-lg flex items-center"><PlusCircle className="mr-2 h-5 w-5" />Add Worker Bee</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p className="text-sm text-muted-foreground">Current Worker Bees: {contextWorkerBees}</p>
+              <p className="text-sm text-muted-foreground">Current Worker Bees: {contextWorkerBees} / {displayMaxWorkerBees}</p>
               <p className="text-sm text-muted-foreground">Cost per Bee: <span className="font-semibold text-primary">{WORKER_BEE_COST}</span> BeeCoins</p>
               <Button 
                 onClick={handleAddBee} 
                 className="w-full bg-primary hover:bg-primary/90"
-                disabled={beeCoins < WORKER_BEE_COST}
+                disabled={beeCoins < WORKER_BEE_COST || contextWorkerBees >= displayMaxWorkerBees}
               >
                 Add 1 Worker Bee
               </Button>
+               {contextWorkerBees >= displayMaxWorkerBees && (
+                <p className="text-xs text-destructive mt-1 text-center">Hive capacity full. Upgrade hive for more space.</p>
+              )}
             </CardContent>
           </Card>
         </div>

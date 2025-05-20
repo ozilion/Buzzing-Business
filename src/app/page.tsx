@@ -12,6 +12,8 @@ import { Users, Home as HomeIcon } from 'lucide-react';
 import {
   INITIAL_WORKER_BEES,
   INITIAL_HIVE_LEVEL,
+  BASE_MAX_WORKER_BEES,
+  MAX_WORKER_BEES_INCREASE_PER_HIVE_LEVEL,
 } from '@/lib/constants';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatLargeNumber } from '@/lib/utils';
@@ -22,7 +24,6 @@ const flowerImagePaths = [
   '/assets/flowers/growing_plant.gif',
 ];
 
-// Hoisted positions array for reuse
 const flowerVisualPositions = [
   { top: '5%', left: '10%', size: 'w-10 h-10', rotate: 'rotate-[-15deg]' },
   { top: '15%', left: '30%', size: 'w-12 h-12', rotate: 'rotate-[5deg]' },
@@ -57,37 +58,33 @@ const flowersData = Array.from({ length: 18 }).map((_, index) => {
   };
 });
 
-// User-adjusted HIVE_POINT
 const HIVE_POINT = { x: 175, y: 169 }; 
 
-// Calculate potential flower target points based on their visual rendering
-const FLOWER_CONTAINER_TOP_OFFSET = 48 + 180 + 16; // main_padding_top_approx (0) + hive_container_mt-12 (48) + hive_height (180) + flower_container_mt-4 (16)
-const FLOWER_CONTAINER_HEIGHT = 128; // h-32
-const APPROX_MAIN_CONTENT_WIDTH = 420 - (2 * 16); // max-w-[420px] - p-4 (16*2 for left/right padding)
+const FLOWER_CONTAINER_TOP_OFFSET = 48 + 180 + 16; 
+const FLOWER_CONTAINER_HEIGHT = 128; 
+const APPROX_MAIN_CONTENT_WIDTH = 420 - (2 * 16); 
 
 const POTENTIAL_FLOWER_TARGETS = flowerVisualPositions.map(p => {
   const topPercent = parseFloat(p.top) / 100;
   const leftPercent = parseFloat(p.left) / 100;
   
-  let sizePx = 40; // Default for w-10 (2.5rem * 16px/rem)
-  if (p.size.includes('w-11')) sizePx = 44; // 2.75rem
-  else if (p.size.includes('w-12')) sizePx = 48; // 3rem
-  else if (p.size.includes('w-14')) sizePx = 56; // 3.5rem
+  let sizePx = 40; 
+  if (p.size.includes('w-11')) sizePx = 44; 
+  else if (p.size.includes('w-12')) sizePx = 48; 
+  else if (p.size.includes('w-14')) sizePx = 56; 
 
-  // Calculate the center of the flower
   const centerX = Math.round(leftPercent * APPROX_MAIN_CONTENT_WIDTH + sizePx / 2);
   const centerY = Math.round(FLOWER_CONTAINER_TOP_OFFSET + (topPercent * FLOWER_CONTAINER_HEIGHT) + (sizePx / 2));
   
-  // Adjust the target point: 10px right, 10px down from the center
-  const targetX = centerX + 10;
-  const targetY = centerY + 10;
+  const targetX = centerX + 10; // 10px right of center
+  const targetY = centerY + 10; // 10px down from center
 
   return { x: targetX, y: targetY };
 });
 
 
-const FLIGHT_DURATION = 2000; // 2 seconds to fly
-const STAY_DURATION = 2000;   // 2 seconds at flower/hive
+const FLIGHT_DURATION = 2000; 
+const STAY_DURATION = 2000;   
 
 function getRandomUniqueElements<T>(arr: T[], numElements: number): T[] {
   if (numElements >= arr.length) {
@@ -102,10 +99,12 @@ export default function HomePage() {
   const {
     hiveLevel: contextHiveLevel,
     workerBees: contextWorkerBees,
+    maxWorkerBees: contextMaxWorkerBees,
     currentHoneyProductionRate: contextHoneyProductionRate,
   } = useGame();
 
   const [displayWorkerBees, setDisplayWorkerBees] = useState(INITIAL_WORKER_BEES);
+  const [displayMaxWorkerBees, setDisplayMaxWorkerBees] = useState(BASE_MAX_WORKER_BEES + (INITIAL_HIVE_LEVEL -1) * MAX_WORKER_BEES_INCREASE_PER_HIVE_LEVEL);
   const [displayHiveLevel, setDisplayHiveLevel] = useState(INITIAL_HIVE_LEVEL);
   const [displayCurrentHoneyProductionRate, setDisplayCurrentHoneyProductionRate] = useState(0);
 
@@ -136,10 +135,10 @@ export default function HomePage() {
     let delay;
 
     if (currentPathIndex === 0 && !hasPausedAtCurrentHiveStartRef.current) {
-      delay = STAY_DURATION; // Initial pause at hive
+      delay = STAY_DURATION; 
       hasPausedAtCurrentHiveStartRef.current = true; 
     } else {
-      delay = FLIGHT_DURATION + STAY_DURATION; // Flight to flower + stay at flower
+      delay = FLIGHT_DURATION + STAY_DURATION; 
     }
 
     const timer = setTimeout(() => {
@@ -157,9 +156,10 @@ export default function HomePage() {
 
   useEffect(() => {
     setDisplayWorkerBees(contextWorkerBees);
+    setDisplayMaxWorkerBees(contextMaxWorkerBees);
     setDisplayHiveLevel(contextHiveLevel);
     setDisplayCurrentHoneyProductionRate(contextHoneyProductionRate);
-  }, [contextWorkerBees, contextHiveLevel, contextHoneyProductionRate]);
+  }, [contextWorkerBees, contextMaxWorkerBees, contextHiveLevel, contextHoneyProductionRate]);
 
 
   return (
@@ -185,7 +185,7 @@ export default function HomePage() {
               <div className="absolute top-1 -right-2 p-1.5 text-on-image-bg space-y-0.5 rounded-md max-w-[150px] text-[10px] shadow-lg bg-black/60 backdrop-blur-sm">
                 <div className="flex items-center gap-1">
                   <Users className="h-2.5 w-2.5 text-yellow-300" />
-                  <span>Bees: <span className="font-bold">{displayWorkerBees}</span></span>
+                  <span>Bees: <span className="font-bold">{displayWorkerBees} / {displayMaxWorkerBees}</span></span>
                 </div>
                 <div className="flex items-center gap-1">
                   <HomeIcon className="h-2.5 w-2.5 text-yellow-300" />
@@ -197,15 +197,14 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Flower Container */}
             <div className="relative w-full h-32 mt-4"> 
               {flowersData.map(flower => (
                 <Image
                   key={flower.id}
                   src={flower.src}
                   alt={flower.alt}
-                  width={50} // This width/height is for the Image component, actual size by className
-                  height={50} // This width/height is for the Image component, actual size by className
+                  width={50} 
+                  height={50} 
                   className={flower.className}
                   style={flower.style}
                   unoptimized={true} 
@@ -214,7 +213,6 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Animated Bee */}
             <Image
               src="/assets/images/bee_1.gif"
               alt="Flying bee"
@@ -226,7 +224,7 @@ export default function HomePage() {
                 top: `${beePosition.y}px`,
                 left: `${beePosition.x}px`,
                 transitionDuration: `${FLIGHT_DURATION}ms`,
-                transform: 'translate(-50%, -50%)', // Center the bee on its coordinates
+                transform: 'translate(-50%, -50%)', 
               }}
               data-ai-hint="animated bee"
             />
@@ -244,6 +242,3 @@ export default function HomePage() {
     </div>
   );
 }
-    
-
-    

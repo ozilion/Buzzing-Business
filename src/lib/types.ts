@@ -8,6 +8,9 @@ export interface GameState {
   beeCoins: number;
   hiveLevel: number;
   workerBees: number;
+  maxWorkerBees: number; // Calculated based on hiveLevel
+  hasQueen: boolean;
+  queenBeeBirthCooldown: number; // Seconds until next birth
   lastUpdated: number;
   honeyPrice: number;
   pollenPrice: number;
@@ -29,4 +32,3 @@ export interface GameContextType extends GameState {
 }
 
 export type ResourceType = 'honey' | 'pollen' | 'propolis' | 'beeCoins';
-
