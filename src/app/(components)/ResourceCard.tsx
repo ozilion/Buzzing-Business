@@ -16,30 +16,23 @@ const iconMap: Record<ResourceType, LucideIcon> = {
   beeCoins: CircleDollarSign,
 };
 
-const nameMap: Record<ResourceType, string> = {
-  honey: 'Honey',
-  pollen: 'Pollen',
-  propolis: 'Propolis',
-  beeCoins: 'BeeCoins',
-};
+// nameMap removed as resource names will no longer be displayed
 
 export function ResourceCard({ type, value, className }: ResourceCardProps) {
   const Icon = iconMap[type];
-  const name = nameMap[type];
   const displayValue = formatLargeNumber(value);
 
   return (
     <Card className={cn("shadow-lg", className)}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{name}</CardTitle>
-        <Icon className="h-5 w-5 text-muted-foreground" />
+      <CardHeader className="flex flex-row items-center justify-center space-y-0 p-0">
+        {/* CardTitle removed */}
+        <Icon className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">
+      <CardContent className="p-0 text-center">
+        <div className="text-2xl font-bold leading-none">
           {displayValue}
         </div>
-        {type === 'honey' && <p className="text-xs text-muted-foreground">units</p>}
-        {type === 'beeCoins' && <p className="text-xs text-muted-foreground">coins</p>}
+        {/* Unit text (e.g., "units", "coins") removed for compactness */}
       </CardContent>
     </Card>
   );

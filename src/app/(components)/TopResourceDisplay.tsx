@@ -25,7 +25,7 @@ export function TopResourceDisplay() {
   const cardClassName = "bg-transparent border-none shadow-none text-white [&_.text-muted-foreground]:text-gray-300 [&_.text-2xl]:text-lg [&_.text-xs]:text-[10px] p-1";
 
   return (
-    <div className="p-1 bg-black/40 backdrop-blur-sm sticky top-0 z-10"> {/* Reduced padding from p-2 to p-1 */}
+    <div className="py-0.5 px-2 bg-black/40 backdrop-blur-sm sticky top-0 z-10"> {/* Reduced vertical padding */}
       <div className="grid grid-cols-4 gap-1">
         <ResourceCard type="honey" value={displayHoney} className={cn(cardClassName, "[&_.text-2xl]:text-yellow-300")} />
         <ResourceCard type="pollen" value={displayPollen} className={cn(cardClassName, "[&_.text-2xl]:text-purple-300")} />
