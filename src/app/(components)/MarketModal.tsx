@@ -28,9 +28,9 @@ export function MarketModal() {
     pollen,
     propolis,
     beeCoins,
-    honeyPrice, // Price from GameContext
-    pollenPrice, // Price from GameContext
-    propolisPrice, // Price from GameContext
+    honeyPrice, 
+    pollenPrice, 
+    propolisPrice, 
     sellHoney,
     sellPollen,
     sellPropolis
@@ -40,29 +40,28 @@ export function MarketModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<ResourceTab>("honey");
 
-  // Client-side prices to snapshot when modal opens
   const [clientHoneyPrice, setClientHoneyPrice] = useState<number>(INITIAL_HONEY_PRICE);
   const [clientPollenPrice, setClientPollenPrice] = useState<number>(INITIAL_POLLEN_PRICE);
   const [clientPropolisPrice, setClientPropolisPrice] = useState<number>(INITIAL_PROPOLIS_PRICE);
 
   useEffect(() => {
     if (isOpen) {
-      // Snapshot prices from GameContext only when modal opens
       setClientHoneyPrice(honeyPrice);
       setClientPollenPrice(pollenPrice);
       setClientPropolisPrice(propolisPrice);
-      setAmount(1); // Reset amount on open
+      setAmount(1); 
     }
-  }, [isOpen]); // Only depend on isOpen to snapshot prices
+  }, [isOpen]);
 
  useEffect(() => {
-    setAmount(1); // Reset amount when tab changes
+    setAmount(1); 
   }, [activeTab]);
 
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
-    setAmount(isNaN(value) || value < 1 ? 1 : value);
+    const currentMax = getCurrentResourceAmount();
+    setAmount(isNaN(value) || value < 1 ? 1 : Math.min(value, currentMax > 0 ? currentMax : 1));
   };
 
   const handleSellSpecificAmount = () => {
@@ -72,10 +71,14 @@ export function MarketModal() {
     setAmount(1);
   };
 
-  const handleSellAllOfActiveResource = () => {
-    if (activeTab === "honey" && honey > 0) sellHoney(honey);
-    else if (activeTab === "pollen" && pollen > 0) sellPollen(pollen);
-    else if (activeTab === "propolis" && propolis > 0) sellPropolis(propolis);
+  const handleSetMaxAmount = () => {
+    setAmount(getCurrentResourceAmount());
+  };
+
+  const handleSellAllResources = () => {
+    if (honey > 0) sellHoney(honey);
+    if (pollen > 0) sellPollen(pollen);
+    if (propolis > 0) sellPropolis(propolis);
     setAmount(1);
   };
   
@@ -102,8 +105,12 @@ export function MarketModal() {
     return null;
   }
 
-  const currentResourceTotalValue = Math.floor(getCurrentResourceAmount() * getCurrentResourceClientPrice());
-  const canSellActiveResource = getCurrentResourceAmount() > 0;
+  const totalEarningsFromAllResources = 
+    Math.floor(honey * clientHoneyPrice) + 
+    Math.floor(pollen * clientPollenPrice) + 
+    Math.floor(propolis * clientPropolisPrice);
+
+  const canSellAnyResource = honey > 0 || pollen > 0 || propolis > 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -132,8 +139,8 @@ export function MarketModal() {
           </TabsList>
 
           <div className="py-4">
-            <div className="grid grid-cols-4 items-center gap-4 mb-4">
-              <Label htmlFor="amount" className="text-right col-span-1">
+            <div className="flex items-center gap-2 mb-4">
+              <Label htmlFor="amount" className="text-right">
                 Amount
               </Label>
               <Input
@@ -141,10 +148,18 @@ export function MarketModal() {
                 type="number"
                 value={amount}
                 onChange={handleAmountChange}
-                className="col-span-3"
+                className="flex-1"
                 min="1"
-                max={getCurrentResourceAmount()} // Prevent entering more than available
+                max={getCurrentResourceAmount()} 
               />
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleSetMaxAmount}
+                disabled={getCurrentResourceAmount() <= 0}
+              >
+                Max
+              </Button>
             </div>
             <div className="text-sm text-muted-foreground text-center mb-2">
               Selected: <span className="capitalize font-semibold text-primary">{activeTab}</span> |
@@ -154,13 +169,10 @@ export function MarketModal() {
           </div>
 
           <TabsContent value="honey">
-            {/* Content specific to honey tab, if any, beyond the shared input and buttons below */}
           </TabsContent>
           <TabsContent value="pollen">
-            {/* Content specific to pollen tab */}
           </TabsContent>
           <TabsContent value="propolis">
-            {/* Content specific to propolis tab */}
           </TabsContent>
         </Tabs>
 
@@ -174,16 +186,17 @@ export function MarketModal() {
           </Button>
 
           <Button
-            onClick={handleSellAllOfActiveResource}
+            onClick={handleSellAllResources}
             variant="outline"
             className="w-full"
-            disabled={!canSellActiveResource}
+            disabled={!canSellAnyResource}
           >
             <Coins className="mr-2 h-4 w-4" />
-            Sell All {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} ({currentResourceTotalValue} Coins)
+            Sell All Resources ({totalEarningsFromAllResources} Coins)
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
+
