@@ -1,0 +1,31 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="80" fill="#FFA000" stroke="#8B4513" stroke-width="5" />
+  
+  <!-- Inventory Grid -->
+  <rect x="50" y="50" width="100" height="100" rx="5" fill="#F5F5DC" stroke="#8B4513" stroke-width="4" />
+  
+  <!-- Grid Lines -->
+  <line x1="83" y1="50" x2="83" y2="150" stroke="#8B4513" stroke-width="2" />
+  <line x1="117" y1="50" x2="117" y2="150" stroke="#8B4513" stroke-width="2" />
+  <line x1="50" y1="83" x2="150" y2="83" stroke="#8B4513" stroke-width="2" />
+  <line x1="50" y1="117" x2="150" y2="117" stroke="#8B4513" stroke-width="2" />
+  
+  <!-- Item Icons -->
+  <circle cx="67" cy="67" r="10" fill="#FFD700" />
+  <rect x="90" y="57" width="20" height="20" rx="3" fill="#8B4513" />
+  <path d="M117,67 L127,57 L137,67 L127,77 Z" fill="#FF9800" />
+  
+  <path d="M57,100 L67,90 L77,100 L67,110 Z" fill="#4CAF50" />
+  <circle cx="100" cy="100" r="10" fill="#9C27B0" />
+  <rect x="124" y="90" width="20" height="20" rx="10" fill="#2196F3" />
+  
+  <rect x="57" y="124" width="20" height="20" rx="3" fill="#F44336" />
+  <path d="M100,124 L110,134 L100,144 L90,134 Z" fill="#607D8B" />
+  <circle cx="134" cy="134" r="10" fill="#FFC107" />
+  
+  <!-- Text -->
+  <text x="100" y="175" text-anchor="middle" font-family="Arial" font-size="20" font-weight="bold" fill="#FFFFFF">
+    ENVANTER
+  </text>
+</svg>

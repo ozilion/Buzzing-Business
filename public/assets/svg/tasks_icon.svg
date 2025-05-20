@@ -1,0 +1,25 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="80" fill="#FFA000" stroke="#8B4513" stroke-width="5" />
+  
+  <!-- Task List Icon -->
+  <rect x="60" y="60" width="80" height="100" rx="5" fill="#F5F5DC" stroke="#8B4513" stroke-width="4" />
+  
+  <!-- List Items -->
+  <rect x="70" y="75" width="40" height="10" rx="2" fill="#8B4513" />
+  <circle cx="130" cy="80" r="5" fill="#8B4513" />
+  
+  <rect x="70" y="95" width="50" height="10" rx="2" fill="#8B4513" />
+  <circle cx="130" cy="100" r="5" stroke="#8B4513" stroke-width="2" fill="none" />
+  
+  <rect x="70" y="115" width="30" height="10" rx="2" fill="#8B4513" />
+  <circle cx="130" cy="120" r="5" fill="#8B4513" />
+  
+  <rect x="70" y="135" width="45" height="10" rx="2" fill="#8B4513" />
+  <circle cx="130" cy="140" r="5" stroke="#8B4513" stroke-width="2" fill="none" />
+  
+  <!-- Text -->
+  <text x="100" y="175" text-anchor="middle" font-family="Arial" font-size="20" font-weight="bold" fill="#FFFFFF">
+    GÖREVLER
+  </text>
+</svg>

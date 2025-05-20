@@ -1,0 +1,29 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- White Flower -->
+  <g transform="translate(100, 100)">
+    <!-- Petals -->
+    <circle cx="0" cy="-30" r="20" fill="#FFFFFF" />
+    <circle cx="21" cy="-21" r="20" fill="#FFFFFF" />
+    <circle cx="30" cy="0" r="20" fill="#FFFFFF" />
+    <circle cx="21" cy="21" r="20" fill="#FFFFFF" />
+    <circle cx="0" cy="30" r="20" fill="#FFFFFF" />
+    <circle cx="-21" cy="21" r="20" fill="#FFFFFF" />
+    <circle cx="-30" cy="0" r="20" fill="#FFFFFF" />
+    <circle cx="-21" cy="-21" r="20" fill="#FFFFFF" />
+    
+    <!-- Center -->
+    <circle cx="0" cy="0" r="22" fill="#FFF9C4" />
+    <circle cx="0" cy="0" r="15" fill="#FFEB3B" />
+    
+    <!-- Pollen Dots -->
+    <circle cx="5" cy="5" r="2" fill="#8B4513" />
+    <circle cx="-5" cy="5" r="2" fill="#8B4513" />
+    <circle cx="5" cy="-5" r="2" fill="#8B4513" />
+    <circle cx="-5" cy="-5" r="2" fill="#8B4513" />
+    <circle cx="0" cy="0" r="2" fill="#8B4513" />
+    <circle cx="10" cy="0" r="2" fill="#8B4513" />
+    <circle cx="-10" cy="0" r="2" fill="#8B4513" />
+    <circle cx="0" cy="10" r="2" fill="#8B4513" />
+    <circle cx="0" cy="-10" r="2" fill="#8B4513" />
+  </g>
+</svg>

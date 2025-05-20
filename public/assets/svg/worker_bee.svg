@@ -1,0 +1,35 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Wings -->
+  <ellipse cx="120" cy="80" rx="35" ry="25" fill="#C5E1F0" fill-opacity="0.6" transform="rotate(-15 120 80)" />
+  <ellipse cx="125" cy="100" rx="30" ry="20" fill="#C5E1F0" fill-opacity="0.6" transform="rotate(-20 125 100)" />
+  
+  <!-- Body -->
+  <ellipse cx="90" cy="100" rx="45" ry="35" fill="#FFC107" />
+  
+  <!-- Stripes -->
+  <path d="M60,80 C70,75 110,75 120,80" fill="#8B4513" stroke="#8B4513" stroke-width="3" />
+  <path d="M55,100 C70,95 110,95 125,100" fill="#8B4513" stroke="#8B4513" stroke-width="3" />
+  <path d="M65,120 C75,115 105,115 115,120" fill="#8B4513" stroke="#8B4513" stroke-width="3" />
+  
+  <!-- Head -->
+  <circle cx="45" cy="90" r="18" fill="#FFC107" />
+  
+  <!-- Eyes -->
+  <circle cx="35" cy="85" r="4" fill="#FFFFFF" />
+  <circle cx="35" cy="85" r="2" fill="#000000" />
+  <circle cx="45" cy="80" r="4" fill="#FFFFFF" />
+  <circle cx="45" cy="80" r="2" fill="#000000" />
+  
+  <!-- Smile -->
+  <path d="M35,95 C40,100 45,100 50,95" fill="none" stroke="#000000" stroke-width="2" />
+  
+  <!-- Antennas -->
+  <path d="M30,75 C25,65 30,55 35,50" fill="none" stroke="#000000" stroke-width="2" />
+  <path d="M50,70 C55,60 50,50 45,45" fill="none" stroke="#000000" stroke-width="2" />
+  <circle cx="35" cy="50" r="3" fill="#000000" />
+  <circle cx="45" cy="45" r="3" fill="#000000" />
+  
+  <!-- Tool (small flower basket) -->
+  <path d="M120,120 C125,125 130,125 135,120" fill="none" stroke="#8B4513" stroke-width="2" />
+  <circle cx="127" cy="120" r="5" fill="#FFEB3B" fill-opacity="0.8" />
+</svg>
