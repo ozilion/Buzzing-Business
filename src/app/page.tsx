@@ -8,7 +8,7 @@ import { MarketModal } from '@/app/(components)/MarketModal';
 import { AIOptimizationModal } from '@/app/(components)/AIOptimizationModal';
 import { HiveActionsModal } from '@/app/(components)/HiveActionsModal';
 import { useGame } from '@/app/(context)/GameContext';
-import { Users, Home as HomeIcon, ShoppingCart, Brain } from 'lucide-react';
+import { Users, Home as HomeIcon } from 'lucide-react'; // Removed unused ShoppingCart, Brain
 import {
   INITIAL_WORKER_BEES,
   INITIAL_HIVE_LEVEL,
@@ -56,15 +56,24 @@ const flowersData = Array.from({ length: 18 }).map((_, index) => {
 });
 
 // User-adjusted HIVE_POINT, representing the hive entrance.
-// Example: { x: 175, y: 169 } - User should have their specific correct value.
-const HIVE_POINT = { x: 175, y: 169 }; // Using example, user has their own value
+const HIVE_POINT = { x: 175, y: 169 }; 
 
 // Potential flower target points for the bee (pixel coordinates relative to main container)
+// Expanded to 18 potential target locations
 const POTENTIAL_FLOWER_TARGETS = [
   { x: 70, y: 480 }, { x: 180, y: 530 }, { x: 290, y: 490 },
   { x: 100, y: 510 }, { x: 250, y: 520 }, { x: 150, y: 470 },
   { x: 220, y: 480 }, { x: 50, y: 500 }, { x: 300, y: 510 },
   { x: 120, y: 460 },
+  // Added 8 new points to make it 18
+  { x: 80, y: 470 },  // Corresponds roughly to flower 11
+  { x: 200, y: 495 }, // Central new point
+  { x: 320, y: 480 }, // Corresponds roughly to flower 12 (far right)
+  { x: 60, y: 520 },  // Corresponds roughly to flower 13 (bottom-left-ish)
+  { x: 270, y: 470 }, // Corresponds roughly to flower 14
+  { x: 130, y: 505 }, // Corresponds roughly to flower 15
+  { x: 240, y: 500 }, // Corresponds roughly to flower 17
+  { x: 190, y: 460 }, // Corresponds roughly to flower 18 (top-mid)
 ];
 
 const FLIGHT_DURATION = 2000; // 2 seconds to fly
@@ -72,7 +81,7 @@ const STAY_DURATION = 2000;   // 2 seconds at flower/hive
 
 // Helper function to get N unique random elements from an array
 function getRandomUniqueElements<T>(arr: T[], numElements: number): T[] {
-  if (numElements > arr.length) {
+  if (numElements >= arr.length) { // Changed to >= to handle asking for all elements
     const shuffledAll = [...arr].sort(() => 0.5 - Math.random());
     return shuffledAll.slice(0, arr.length);
   }
@@ -94,56 +103,42 @@ export default function HomePage() {
   const [beePosition, setBeePosition] = useState(HIVE_POINT);
   const [currentPathIndex, setCurrentPathIndex] = useState(0);
   const [currentFlightPath, setCurrentFlightPath] = useState<Array<{x: number; y: number}>>([]);
-  // Ref to manage pause state at the beginning of each hive visit (start of a new tour)
   const hasPausedAtCurrentHiveStartRef = useRef(false);
 
 
   const generateNewFlightPath = useCallback(() => {
     const randomFlowers = getRandomUniqueElements(POTENTIAL_FLOWER_TARGETS, 3);
-    setCurrentFlightPath([HIVE_POINT, ...randomFlowers]); // Path: Hive, F1, F2, F3
-    setCurrentPathIndex(0); // Start path from the beginning (Hive)
-    setBeePosition(HIVE_POINT); // Ensure bee is visually at hive
-    hasPausedAtCurrentHiveStartRef.current = false; // Reset pause flag for the new path start at Hive
+    setCurrentFlightPath([HIVE_POINT, ...randomFlowers]); 
+    setCurrentPathIndex(0); 
+    setBeePosition(HIVE_POINT); 
+    hasPausedAtCurrentHiveStartRef.current = false; 
   }, []);
 
   useEffect(() => {
-    // Generate initial flight path when the component mounts
     generateNewFlightPath();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount as generateNewFlightPath is memoized
+  }, []); 
 
   useEffect(() => {
-    if (currentFlightPath.length === 0) return; // Path not yet generated
+    if (currentFlightPath.length === 0) return; 
 
     const targetPosition = currentFlightPath[currentPathIndex];
-    // Set bee position to current target. The visual transition is handled by CSS.
     setBeePosition(targetPosition);
 
     let delay;
 
     if (currentPathIndex === 0 && !hasPausedAtCurrentHiveStartRef.current) {
-      // This condition is met at the start of a new flight path (when bee is at HIVE_POINT).
-      // Pause at the hive before flying out.
       delay = STAY_DURATION;
-      hasPausedAtCurrentHiveStartRef.current = true; // Mark that pause for this hive visit has been initiated
+      hasPausedAtCurrentHiveStartRef.current = true; 
     } else {
-      // For all other movements:
-      // - Flying from Hive (index 0, after initial pause) to Flower 1 (index 1)
-      // - Flying from Flower X to Flower Y
-      // - Flying from Last Flower and logically arriving at Hive (next index would be 0, triggering path regeneration)
-      // The delay includes the flight time to the *current* target and the stay duration *at* that target.
       delay = FLIGHT_DURATION + STAY_DURATION;
     }
 
     const timer = setTimeout(() => {
-      const nextIdx = (currentPathIndex + 1) % currentFlightPath.length;
-      if (nextIdx === 0) {
-        // Bee has completed a tour (H -> F1 -> F2 -> F3 -> H_implicitly)
-        // and is now logically at the last flower (index 3),
-        // about to "return" to hive by generating a new path that starts at the hive.
-        generateNewFlightPath();
+      const nextIdx = (currentPathIndex + 1); // No modulo here initially
+      if (nextIdx >= currentFlightPath.length) { // If it's the end of path (H, F1, F2, F3)
+        generateNewFlightPath(); // Regenerate path, which starts at hive.
       } else {
-        // Move to the next point in the current path (e.g., next flower)
         setCurrentPathIndex(nextIdx);
       }
     }, delay);
@@ -168,10 +163,8 @@ export default function HomePage() {
         <TopResourceDisplay />
 
         <ScrollArea className="flex-1">
-          {/* The main content area for the hive and flowers */}
           <main className="flex flex-col items-center justify-end p-4 pb-8 min-h-[calc(100%-100px)] relative">
-            {/* Hive Section - Positioned towards the bottom by justify-end and padding */}
-            <div className="relative inline-block mt-12 text-center"> {/* mt-12 to push down a bit more if needed */}
+            <div className="relative inline-block mt-12 text-center"> 
               <Image
                 src="/assets/images/hive.png"
                 alt="Beehive"
@@ -196,36 +189,33 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Flower Container - Positioned below the hive */}
-            <div className="relative w-full h-32 mt-4"> {/* Adjust h-32 and mt-4 as needed */}
+            <div className="relative w-full h-32 mt-4"> 
               {flowersData.map(flower => (
                 <Image
                   key={flower.id}
                   src={flower.src}
                   alt={flower.alt}
-                  width={50} // Default width, overridden by className
-                  height={50} // Default height, overridden by className
+                  width={50} 
+                  height={50} 
                   className={flower.className}
                   style={flower.style}
-                  unoptimized={true} // Important for GIFs
+                  unoptimized={true} 
                   data-ai-hint="animated flower"
                 />
               ))}
             </div>
 
-            {/* Animated Bee */}
             <Image
               src="/assets/images/bee_1.gif"
               alt="Flying bee"
-              width={30} // Adjust size as needed
-              height={30} // Adjust size as needed
-              unoptimized={true} // Important for GIFs
+              width={30} 
+              height={30} 
+              unoptimized={true} 
               className="absolute z-20 transition-all ease-in-out pointer-events-none"
               style={{
                 top: `${beePosition.y}px`,
                 left: `${beePosition.x}px`,
                 transitionDuration: `${FLIGHT_DURATION}ms`,
-                // transform: 'translate(-50%, -50%)' // Optional: centers the bee image on its coordinates
               }}
               data-ai-hint="animated bee"
             />
