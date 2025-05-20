@@ -58,7 +58,7 @@ const flowersData = Array.from({ length: 18 }).map((_, index) => {
   };
 });
 
-const HIVE_POINT = { x: 175, y: 169 }; 
+const HIVE_POINT = { x: 190, y: 169 }; 
 
 const FLOWER_CONTAINER_TOP_OFFSET = 48 + 180 + 16; 
 const FLOWER_CONTAINER_HEIGHT = 128; 
