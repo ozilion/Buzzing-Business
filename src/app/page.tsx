@@ -17,17 +17,15 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatLargeNumber } from '@/lib/utils';
 
-// Define flower data: 3 types, 4 of each = 12 flowers
+// Define flower data: 3 types, 6 of each = 18 flowers
 const flowerTypes = [
   '/assets/flowers/sunflower.gif',
   '/assets/flowers/rose.gif',
   '/assets/flowers/growing_plant.gif',
 ];
 
-const flowersData = Array.from({ length: 12 }).map((_, index) => {
-  const typeIndex = index % flowerTypes.length; // Use flowerTypes.length for safety
-  // Define varied positions and styles
-  // These are examples, you can fine-tune them for better visual scattering
+const flowersData = Array.from({ length: 18 }).map((_, index) => {
+  const typeIndex = index % flowerTypes.length;
   const positions = [
     { top: '5%', left: '10%', size: 'w-10 h-10', rotate: 'rotate-[-15deg]' },
     { top: '15%', left: '30%', size: 'w-12 h-12', rotate: 'rotate-[5deg]' },
@@ -41,6 +39,13 @@ const flowersData = Array.from({ length: 12 }).map((_, index) => {
     { top: '70%', left: '75%', size: 'w-10 h-10', rotate: 'rotate-[-8deg]' },
     { top: '80%', left: '30%', size: 'w-12 h-12', rotate: 'rotate-[18deg]' },
     { top: '60%', left: '90%', size: 'w-10 h-10', rotate: 'rotate-[-22deg]' },
+    // Additional 6 flower positions
+    { top: '25%', left: '5%', size: 'w-11 h-11', rotate: 'rotate-[8deg]' },
+    { top: '45%', left: '50%', size: 'w-10 h-10', rotate: 'rotate-[-12deg]' },
+    { top: '75%', left: '15%', size: 'w-12 h-12', rotate: 'rotate-[22deg]' },
+    { top: '10%', left: '80%', size: 'w-10 h-10', rotate: 'rotate-[30deg]' },
+    { top: '50%', left: '70%', size: 'w-11 h-11', rotate: 'rotate-[-25deg]' },
+    { top: '85%', left: '55%', size: 'w-12 h-12', rotate: 'rotate-[12deg]' },
   ];
   const style = positions[index % positions.length]; // Cycle through predefined styles
 
@@ -84,7 +89,7 @@ export default function HomePage() {
 
         <ScrollArea className="flex-1">
           <main className="flex flex-col items-center justify-end p-4 pb-8 min-h-[calc(100%-100px)] relative">
-            <div className="text-center mt-12"> {/* Adjusted margin-top here */}
+            <div className="text-center mt-12">
               <div className="relative inline-block">
                 <Image
                   src="/assets/images/hive.png"
@@ -141,3 +146,4 @@ export default function HomePage() {
     </div>
   );
 }
+
