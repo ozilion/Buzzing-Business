@@ -26,6 +26,7 @@ export function HiveManagementCard() {
     addWorkerBees 
   } = useGame();
 
+  // Initialize state with constants to prevent hydration mismatch
   const [displayWorkerBees, setDisplayWorkerBees] = useState(INITIAL_WORKER_BEES);
   const [displayHiveLevel, setDisplayHiveLevel] = useState(INITIAL_HIVE_LEVEL);
   const [displayCurrentHoneyProductionRate, setDisplayCurrentHoneyProductionRate] = useState(
@@ -35,6 +36,7 @@ export function HiveManagementCard() {
     BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, INITIAL_HIVE_LEVEL - 1)
   );
 
+  // Effect to update display values from context after client-side hydration
   useEffect(() => {
     setDisplayWorkerBees(contextWorkerBees);
     setDisplayHiveLevel(contextHiveLevel);
@@ -56,21 +58,21 @@ export function HiveManagementCard() {
       <CardContent className="space-y-6">
         <div className="relative w-full h-48 rounded-md overflow-hidden mb-4">
             <Image
-              src="https://placehold.co/600x250.png"
-              alt="Flower meadow with beehives"
+              src="/assets/scene.png" // Path relative to the 'public' directory
+              alt="Geniş bir kır bahçesi ve arı kovanları"
               layout="fill"
               objectFit="cover"
               className="z-0"
-              data-ai-hint="flower meadow beehives"
+              data-ai-hint="flower meadow beehives flying bees"
             />
             <div className="absolute inset-0 flex items-center justify-center z-10">
               <div className="relative w-32 h-32"> 
                 <Image
-                  src="https://placehold.co/128x128.png"
-                  alt="Central Beehive"
+                  src="/assets/hive.png" // Path relative to the 'public' directory
+                  alt="Arı Kovanı"
                   layout="fill"
                   objectFit="contain"
-                  data-ai-hint="beehive focused"
+                  data-ai-hint="beehive detailed"
                 />
               </div>
             </div>
