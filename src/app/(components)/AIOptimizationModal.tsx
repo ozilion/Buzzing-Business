@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useGame } from '@/app/(context)/GameContext';
-import { BrainCircuit, Sparkles, Loader2 } from 'lucide-react';
+import { BrainCircuitIcon, Sparkles, Loader2, Brain } from 'lucide-react';
 import type { OptimizeHoneyProductionInput, OptimizeHoneyProductionOutput } from '@/ai/flows/optimize-honey-production';
 import { FLOWER_TYPES } from '@/lib/constants';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -54,7 +54,7 @@ export function AIOptimizationModal() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       hiveLevel,
-      workerBeeCount: workerBees, // Corrected: use workerBees from context
+      workerBeeCount: workerBees, 
       flowerTypes: [FLOWER_TYPES[0]],
       currentHoneyProductionRate,
       pollen,
@@ -66,13 +66,13 @@ export function AIOptimizationModal() {
     if (isOpen) {
       reset({
         hiveLevel,
-        workerBeeCount: workerBees, // Corrected: use workerBees from context
+        workerBeeCount: workerBees,
         flowerTypes: [FLOWER_TYPES[0]],
         currentHoneyProductionRate,
         pollen,
         propolis,
       });
-      setAiResponse(null); // Clear previous response when modal opens
+      setAiResponse(null); 
     }
   }, [isOpen, hiveLevel, workerBees, currentHoneyProductionRate, pollen, propolis, reset]);
 
@@ -107,8 +107,8 @@ export function AIOptimizationModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full sm:w-auto">
-          <BrainCircuit className="mr-2 h-4 w-4" /> Get AI Optimization Tips
+        <Button variant="outline" size="sm" className="w-full flex-col h-auto py-2 text-xs sm:text-sm border-blue-400 text-blue-300 hover:bg-blue-500/20 hover:text-blue-200 bg-white/10 shadow-md">
+          <Brain className="mb-1 h-5 w-5" /> AI Tips
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md md:max-w-lg">
@@ -222,7 +222,6 @@ export function AIOptimizationModal() {
   );
 }
 
-// Helper component for form items
 function FormItem({ field, label, type, error }: { field: any; label: string; type: string; error?: string }) {
   return (
     <div className="space-y-1">
@@ -232,4 +231,3 @@ function FormItem({ field, label, type, error }: { field: any; label: string; ty
     </div>
   );
 }
-

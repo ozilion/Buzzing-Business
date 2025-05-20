@@ -49,12 +49,12 @@ export function MarketModal() {
       setClientHoneyPrice(honeyPrice);
       setClientPollenPrice(pollenPrice);
       setClientPropolisPrice(propolisPrice);
-      setAmount(1); // Reset amount when modal opens or tab changes
+      setAmount(1); 
     }
   }, [isOpen, honeyPrice, pollenPrice, propolisPrice]);
 
  useEffect(() => {
-    setAmount(1); // Reset amount when tab changes
+    setAmount(1); 
   }, [activeTab]);
 
 
@@ -70,7 +70,7 @@ export function MarketModal() {
     setAmount(1);
   };
 
-  const handleBuy = () => { // Buy is only for honey
+  const handleBuy = () => { 
     if (activeTab === "honey") {
       buyHoney(amount);
       setAmount(1);
@@ -108,8 +108,8 @@ export function MarketModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
-          <ShoppingCart className="mr-2 h-4 w-4" /> Visit Market
+        <Button variant="outline" size="sm" className="w-full flex-col h-auto py-2 text-xs sm:text-sm border-green-400 text-green-300 hover:bg-green-500/20 hover:text-green-200 bg-white/10 shadow-md">
+          <ShoppingCart className="mb-1 h-5 w-5" /> Market
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg"> 
@@ -119,7 +119,7 @@ export function MarketModal() {
           </DialogTitle>
           <DialogDescription>
             Buy or sell resources. Prices fluctuate! 
-            Your BeeCoins: <span className="font-semibold text-primary">{beeCoins}</span>
+            Your BeeCoins: <span className="font-semibold text-primary">{beeCoins.toFixed(0)}</span>
           </DialogDescription>
         </DialogHeader>
 
