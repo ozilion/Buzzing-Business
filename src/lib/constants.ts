@@ -12,8 +12,8 @@ export const INITIAL_PROPOLIS_PRICE = 15; // BeeCoins per unit of propolis
 
 // Realistic Production Rates (per second, assuming 'units' are balanced for gameplay)
 // Honey: (workerBees * baseBeeProd + hiveLevel * baseHiveProd)
-export const BASE_HONEY_PRODUCTION_PER_BEE_PER_SECOND = 0.0025; // Increased from 0.002
-export const HONEY_PRODUCTION_HIVE_LEVEL_MULTIPLIER_PER_SECOND = 0.0015; // Increased from 0.001
+export const BASE_HONEY_PRODUCTION_PER_BEE_PER_SECOND = 0.0025;
+export const HONEY_PRODUCTION_HIVE_LEVEL_MULTIPLIER_PER_SECOND = 0.0015;
 
 // Pollen: (workerBees * baseBeeProd + hiveLevel * baseHiveProd)
 export const BASE_POLLEN_PRODUCTION_PER_BEE_PER_SECOND = 0.001;
@@ -26,7 +26,7 @@ export const BASE_PROPOLIS_PRODUCTION_PER_HIVE_LEVEL_PER_SECOND = 0.0002;
 export const POLLEN_CHANCE_ON_COLLECT = 0.1; // 10% chance to get 1 pollen
 export const PROPOLIS_CHANCE_ON_COLLECT = 0.05; // 5% chance to get 1 propolis
 
-export const HIVE_UPGRADE_COST_MULTIPLIER = 1.20; // Cost increases by 20% per level (Changed from 1.3)
+export const HIVE_UPGRADE_COST_MULTIPLIER = 1.20; // Cost increases by 20% per level
 export const BASE_HIVE_UPGRADE_COST = 50; // BeeCoins for level 2
 
 export const WORKER_BEE_COST = 20; // BeeCoins per worker bee
@@ -39,6 +39,7 @@ export const MAX_WORKER_BEES_INCREASE_PER_HIVE_LEVEL = 100; // Each hive level i
 export const QUEEN_BEE_INITIAL_PRESENCE = true; // Does the game start with a queen?
 export const QUEEN_BEE_BIRTH_INTERVAL_SECONDS = 300; // Queen produces a bee every 5 minutes
 export const QUEEN_BEE_BIRTH_AMOUNT = 1; // Number of bees born each interval
+export const QUEEN_BEE_PRODUCTION_BONUS_MULTIPLIER = 1.10; // 10% production bonus if queen is present
 
 export const MAX_OFFLINE_PRODUCTION_HOURS = 12;
 

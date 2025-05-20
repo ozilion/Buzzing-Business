@@ -38,23 +38,33 @@ import {
   QUEEN_BEE_INITIAL_PRESENCE,
   QUEEN_BEE_BIRTH_INTERVAL_SECONDS,
   QUEEN_BEE_BIRTH_AMOUNT,
+  QUEEN_BEE_PRODUCTION_BONUS_MULTIPLIER,
 } from '@/lib/constants';
 import type { OptimizeHoneyProductionInput, OptimizeHoneyProductionOutput } from '@/ai/flows/optimize-honey-production';
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
-const calculateHoneyProductionRate = (hiveLevel: number, workerBees: number): number => {
-  const ratePerSecond = (workerBees * BASE_HONEY_PRODUCTION_PER_BEE_PER_SECOND) + (hiveLevel * HONEY_PRODUCTION_HIVE_LEVEL_MULTIPLIER_PER_SECOND);
+const calculateHoneyProductionRate = (hiveLevel: number, workerBees: number, hasQueen: boolean): number => {
+  let ratePerSecond = (workerBees * BASE_HONEY_PRODUCTION_PER_BEE_PER_SECOND) + (hiveLevel * HONEY_PRODUCTION_HIVE_LEVEL_MULTIPLIER_PER_SECOND);
+  if (hasQueen) {
+    ratePerSecond *= QUEEN_BEE_PRODUCTION_BONUS_MULTIPLIER;
+  }
   return ratePerSecond * 3600; // per hour
 };
 
-const calculatePollenProductionRate = (hiveLevel: number, workerBees: number): number => {
-  const ratePerSecond = (workerBees * BASE_POLLEN_PRODUCTION_PER_BEE_PER_SECOND) + (hiveLevel * POLLEN_PRODUCTION_HIVE_LEVEL_MULTIPLIER_PER_SECOND);
+const calculatePollenProductionRate = (hiveLevel: number, workerBees: number, hasQueen: boolean): number => {
+  let ratePerSecond = (workerBees * BASE_POLLEN_PRODUCTION_PER_BEE_PER_SECOND) + (hiveLevel * POLLEN_PRODUCTION_HIVE_LEVEL_MULTIPLIER_PER_SECOND);
+  if (hasQueen) {
+    ratePerSecond *= QUEEN_BEE_PRODUCTION_BONUS_MULTIPLIER;
+  }
   return ratePerSecond * 3600; // per hour
 };
 
-const calculatePropolisProductionRate = (hiveLevel: number): number => {
-  const ratePerSecond = hiveLevel * BASE_PROPOLIS_PRODUCTION_PER_HIVE_LEVEL_PER_SECOND;
+const calculatePropolisProductionRate = (hiveLevel: number, hasQueen: boolean): number => {
+  let ratePerSecond = hiveLevel * BASE_PROPOLIS_PRODUCTION_PER_HIVE_LEVEL_PER_SECOND;
+  if (hasQueen) {
+    ratePerSecond *= QUEEN_BEE_PRODUCTION_BONUS_MULTIPLIER;
+  }
   return ratePerSecond * 3600; // per hour
 };
 
@@ -68,21 +78,23 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     const savedGame = typeof window !== 'undefined' ? localStorage.getItem('buzzingBusinessGame') : null;
     let initialHiveLevel = INITIAL_HIVE_LEVEL;
     let initialWorkerBees = INITIAL_WORKER_BEES;
+    let initialHasQueen = QUEEN_BEE_INITIAL_PRESENCE;
 
     if (savedGame) {
       const parsedGame = JSON.parse(savedGame) as GameState;
       initialHiveLevel = parsedGame.hiveLevel;
       initialWorkerBees = parsedGame.workerBees;
+      initialHasQueen = parsedGame.hasQueen !== undefined ? parsedGame.hasQueen : QUEEN_BEE_INITIAL_PRESENCE;
       return {
         ...parsedGame,
         pollenPrice: parsedGame.pollenPrice || INITIAL_POLLEN_PRICE,
         propolisPrice: parsedGame.propolisPrice || INITIAL_PROPOLIS_PRICE,
         maxWorkerBees: calculateMaxWorkerBees(initialHiveLevel),
-        hasQueen: parsedGame.hasQueen !== undefined ? parsedGame.hasQueen : QUEEN_BEE_INITIAL_PRESENCE,
+        hasQueen: initialHasQueen,
         queenBeeBirthCooldown: parsedGame.queenBeeBirthCooldown !== undefined ? parsedGame.queenBeeBirthCooldown : QUEEN_BEE_BIRTH_INTERVAL_SECONDS,
-        currentHoneyProductionRate: calculateHoneyProductionRate(initialHiveLevel, initialWorkerBees),
-        currentPollenProductionRate: calculatePollenProductionRate(initialHiveLevel, initialWorkerBees),
-        currentPropolisProductionRate: calculatePropolisProductionRate(initialHiveLevel),
+        currentHoneyProductionRate: calculateHoneyProductionRate(initialHiveLevel, initialWorkerBees, initialHasQueen),
+        currentPollenProductionRate: calculatePollenProductionRate(initialHiveLevel, initialWorkerBees, initialHasQueen),
+        currentPropolisProductionRate: calculatePropolisProductionRate(initialHiveLevel, initialHasQueen),
       };
     }
     return {
@@ -93,15 +105,15 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       hiveLevel: initialHiveLevel,
       workerBees: initialWorkerBees,
       maxWorkerBees: calculateMaxWorkerBees(initialHiveLevel),
-      hasQueen: QUEEN_BEE_INITIAL_PRESENCE,
+      hasQueen: initialHasQueen,
       queenBeeBirthCooldown: QUEEN_BEE_BIRTH_INTERVAL_SECONDS,
       lastUpdated: Date.now(),
       honeyPrice: INITIAL_HONEY_PRICE,
       pollenPrice: INITIAL_POLLEN_PRICE,
       propolisPrice: INITIAL_PROPOLIS_PRICE,
-      currentHoneyProductionRate: calculateHoneyProductionRate(initialHiveLevel, initialWorkerBees),
-      currentPollenProductionRate: calculatePollenProductionRate(initialHiveLevel, initialWorkerBees),
-      currentPropolisProductionRate: calculatePropolisProductionRate(initialHiveLevel),
+      currentHoneyProductionRate: calculateHoneyProductionRate(initialHiveLevel, initialWorkerBees, initialHasQueen),
+      currentPollenProductionRate: calculatePollenProductionRate(initialHiveLevel, initialWorkerBees, initialHasQueen),
+      currentPropolisProductionRate: calculatePropolisProductionRate(initialHiveLevel, initialHasQueen),
     };
   });
 
@@ -124,13 +136,13 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     const currentMaxBees = calculateMaxWorkerBees(gameState.hiveLevel);
 
     if (effectiveElapsedSeconds > 0) {
-      const honeyProductionRatePerSecond = calculateHoneyProductionRate(gameState.hiveLevel, gameState.workerBees) / 3600;
+      const honeyProductionRatePerSecond = calculateHoneyProductionRate(gameState.hiveLevel, gameState.workerBees, gameState.hasQueen) / 3600;
       accumulatedHoney = honeyProductionRatePerSecond * effectiveElapsedSeconds;
 
-      const pollenProductionRatePerSecond = calculatePollenProductionRate(gameState.hiveLevel, gameState.workerBees) / 3600;
+      const pollenProductionRatePerSecond = calculatePollenProductionRate(gameState.hiveLevel, gameState.workerBees, gameState.hasQueen) / 3600;
       accumulatedPollen = pollenProductionRatePerSecond * effectiveElapsedSeconds;
       
-      const propolisProductionRatePerSecond = calculatePropolisProductionRate(gameState.hiveLevel) / 3600;
+      const propolisProductionRatePerSecond = calculatePropolisProductionRate(gameState.hiveLevel, gameState.hasQueen) / 3600;
       accumulatedPropolis = propolisProductionRatePerSecond * effectiveElapsedSeconds;
 
       if (gameState.hasQueen) {
@@ -166,25 +178,27 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       }
     }
     
+    const updatedWorkerBeesAfterOffline = Math.min(gameState.workerBees + bornBeesOffline, currentMaxBees);
+
     setGameState(prev => ({
       ...prev,
       honey: prev.honey + accumulatedHoney,
       pollen: prev.pollen + accumulatedPollen,
       propolis: prev.propolis + accumulatedPropolis,
-      workerBees: Math.min(prev.workerBees + bornBeesOffline, currentMaxBees),
+      workerBees: updatedWorkerBeesAfterOffline,
       queenBeeBirthCooldown: finalQueenBeeBirthCooldown,
       lastUpdated: now,
-      currentHoneyProductionRate: calculateHoneyProductionRate(prev.hiveLevel, prev.workerBees + bornBeesOffline),
-      currentPollenProductionRate: calculatePollenProductionRate(prev.hiveLevel, prev.workerBees + bornBeesOffline),
-      currentPropolisProductionRate: calculatePropolisProductionRate(prev.hiveLevel),
+      currentHoneyProductionRate: calculateHoneyProductionRate(prev.hiveLevel, updatedWorkerBeesAfterOffline, prev.hasQueen),
+      currentPollenProductionRate: calculatePollenProductionRate(prev.hiveLevel, updatedWorkerBeesAfterOffline, prev.hasQueen),
+      currentPropolisProductionRate: calculatePropolisProductionRate(prev.hiveLevel, prev.hasQueen),
       maxWorkerBees: currentMaxBees,
     }));
 
     const intervalId = setInterval(() => {
       setGameState(prev => {
-        const honeyProductionPerSecond = calculateHoneyProductionRate(prev.hiveLevel, prev.workerBees) / 3600;
-        const pollenProductionPerSecond = calculatePollenProductionRate(prev.hiveLevel, prev.workerBees) / 3600;
-        const propolisProductionPerSecond = calculatePropolisProductionRate(prev.hiveLevel) / 3600;
+        const honeyProductionPerSecond = calculateHoneyProductionRate(prev.hiveLevel, prev.workerBees, prev.hasQueen) / 3600;
+        const pollenProductionPerSecond = calculatePollenProductionRate(prev.hiveLevel, prev.workerBees, prev.hasQueen) / 3600;
+        const propolisProductionPerSecond = calculatePropolisProductionRate(prev.hiveLevel, prev.hasQueen) / 3600;
 
         let newWorkerBees = prev.workerBees;
         let newQueenBeeBirthCooldown = prev.queenBeeBirthCooldown - 1;
@@ -193,10 +207,10 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 
         if (prev.hasQueen && newQueenBeeBirthCooldown <= 0) {
           if (newWorkerBees < newMaxWorkerBees) {
-            newWorkerBees += QUEEN_BEE_BIRTH_AMOUNT;
+            newWorkerBees = Math.min(newWorkerBees + QUEEN_BEE_BIRTH_AMOUNT, newMaxWorkerBees);
             toast({
               title: "New Bee!",
-              description: `The Queen has blessed the hive with ${QUEEN_BEE_BIRTH_AMOUNT} new worker bee(s).`,
+              description: `The Queen has blessed the hive with ${QUEEN_BEE_BIRTH_AMOUNT} new worker bee(s). Current bees: ${newWorkerBees}/${newMaxWorkerBees}`,
             });
           }
           newQueenBeeBirthCooldown = QUEEN_BEE_BIRTH_INTERVAL_SECONDS;
@@ -207,10 +221,14 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
           honey: prev.honey + honeyProductionPerSecond,
           pollen: prev.pollen + pollenProductionPerSecond,
           propolis: prev.propolis + propolisProductionPerSecond,
-          workerBees: Math.min(newWorkerBees, newMaxWorkerBees),
+          workerBees: newWorkerBees, // Already capped
           queenBeeBirthCooldown: newQueenBeeBirthCooldown,
-          maxWorkerBees: newMaxWorkerBees,
+          maxWorkerBees: newMaxWorkerBees, // Ensure this is also updated if hive level changes elsewhere
           lastUpdated: Date.now(),
+          // Production rates are based on current state, updated with workerBees change if queen gives birth
+          currentHoneyProductionRate: calculateHoneyProductionRate(prev.hiveLevel, newWorkerBees, prev.hasQueen),
+          currentPollenProductionRate: calculatePollenProductionRate(prev.hiveLevel, newWorkerBees, prev.hasQueen),
+          currentPropolisProductionRate: calculatePropolisProductionRate(prev.hiveLevel, prev.hasQueen),
         };
       });
     }, 1000);
@@ -232,7 +250,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   }, []); 
 
   const collectHoney = useCallback(() => {
-    const baseHoneyRate = calculateHoneyProductionRate(gameState.hiveLevel, gameState.workerBees);
+    const baseHoneyRate = calculateHoneyProductionRate(gameState.hiveLevel, gameState.workerBees, gameState.hasQueen);
     const bonusHoney = baseHoneyRate / 3600 * 10; // 10 seconds of production
     let newPollen = gameState.pollen;
     let newPropolis = gameState.propolis;
@@ -260,7 +278,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     }
     toast({ title: "Bonus Collected!", description });
 
-  }, [gameState.hiveLevel, gameState.workerBees, gameState.pollen, gameState.propolis, toast]);
+  }, [gameState.hiveLevel, gameState.workerBees, gameState.hasQueen, gameState.pollen, gameState.propolis, toast]);
 
   const upgradeHive = useCallback(() => {
     const cost = BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, gameState.hiveLevel -1);
@@ -268,23 +286,22 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       setGameState(prev => {
         const newHiveLevel = prev.hiveLevel + 1;
         const newMaxBees = calculateMaxWorkerBees(newHiveLevel);
-        const newWorkerBees = Math.min(prev.workerBees, newMaxBees); 
+        // Worker bees count doesn't change on hive upgrade, just max capacity
         return {
           ...prev,
           beeCoins: prev.beeCoins - cost,
           hiveLevel: newHiveLevel,
-          maxWorkerBees: newMaxBees,
-          workerBees: newWorkerBees,
-          currentHoneyProductionRate: calculateHoneyProductionRate(newHiveLevel, newWorkerBees),
-          currentPollenProductionRate: calculatePollenProductionRate(newHiveLevel, newWorkerBees),
-          currentPropolisProductionRate: calculatePropolisProductionRate(newHiveLevel),
+          maxWorkerBees: newMaxBees, 
+          currentHoneyProductionRate: calculateHoneyProductionRate(newHiveLevel, prev.workerBees, prev.hasQueen),
+          currentPollenProductionRate: calculatePollenProductionRate(newHiveLevel, prev.workerBees, prev.hasQueen),
+          currentPropolisProductionRate: calculatePropolisProductionRate(newHiveLevel, prev.hasQueen),
         };
       });
       toast({ title: "Hive Upgraded!", description: `Hive is now level ${gameState.hiveLevel + 1}. Max bees increased to ${calculateMaxWorkerBees(gameState.hiveLevel + 1)}.` });
     } else {
       toast({ title: "Not enough BeeCoins!", description: `You need ${cost.toFixed(0)} BeeCoins to upgrade.`, variant: "destructive" });
     }
-  }, [gameState.beeCoins, gameState.hiveLevel, gameState.workerBees, toast]);
+  }, [gameState.beeCoins, gameState.hiveLevel, gameState.workerBees, gameState.hasQueen, toast]);
 
   const addWorkerBees = useCallback((amount: number) => {
     const cost = WORKER_BEE_COST * amount;
@@ -311,15 +328,16 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       ...prev,
       beeCoins: prev.beeCoins - actualCost,
       workerBees: newWorkerBees,
-      currentHoneyProductionRate: calculateHoneyProductionRate(prev.hiveLevel, newWorkerBees),
-      currentPollenProductionRate: calculatePollenProductionRate(prev.hiveLevel, newWorkerBees),
+      currentHoneyProductionRate: calculateHoneyProductionRate(prev.hiveLevel, newWorkerBees, prev.hasQueen),
+      currentPollenProductionRate: calculatePollenProductionRate(prev.hiveLevel, newWorkerBees, prev.hasQueen),
+      // Propolis production rate is not affected by worker bee count
     }});
-    toast({ title: "Worker Bees Acquired!", description: `Added ${actualAmountToAdd} worker bees.` });
+    toast({ title: "Worker Bees Acquired!", description: `Added ${actualAmountToAdd} worker bees. Current bees: ${gameState.workerBees + actualAmountToAdd}/${gameState.maxWorkerBees}` });
     if (actualAmountToAdd < amount) {
         toast({ title: "Hive Reached Capacity", description: `Could only add ${actualAmountToAdd} bees. Upgrade hive for more space.`, variant: "default" });
     }
 
-  }, [gameState.beeCoins, gameState.hiveLevel, gameState.workerBees, gameState.maxWorkerBees, toast]);
+  }, [gameState.beeCoins, gameState.hiveLevel, gameState.workerBees, gameState.maxWorkerBees, gameState.hasQueen, toast]);
 
   const sellHoney = useCallback((amount: number) => {
     const roundedAmount = parseFloat(amount.toFixed(2));
@@ -341,6 +359,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   }, [gameState.honey, gameState.honeyPrice, toast]);
 
   const buyHoney = useCallback((amount: number) => {
+    // This function is currently not used as buy button was removed. Keeping for potential future use.
     const roundedAmount = parseFloat(amount.toFixed(2));
     const cost = Math.floor(roundedAmount * gameState.honeyPrice);
     if (gameState.beeCoins >= cost && roundedAmount > 0) {
@@ -429,3 +448,4 @@ export const useGame = (): GameContextType => {
   }
   return context;
 };
+
