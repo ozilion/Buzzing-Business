@@ -19,9 +19,9 @@ import { formatLargeNumber } from '@/lib/utils';
 
 // Define flower data: 3 types, 4 of each = 12 flowers
 const flowerTypes = [
-  '/assets/images/flowers/sunflower.gif',
-  '/assets/images/flowers/rose.gif',
-  '/assets/images/flowers/growing_plant.gif',
+  '/assets/flowers/sunflower.gif',
+  '/assets/flowers/rose.gif',
+  '/assets/flowers/growing_plant.gif',
 ];
 
 const flowersData = Array.from({ length: 12 }).map((_, index) => {
