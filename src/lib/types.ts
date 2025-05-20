@@ -13,6 +13,8 @@ export interface GameState {
   pollenPrice: number;
   propolisPrice: number;
   currentHoneyProductionRate: number; // units per hour
+  currentPollenProductionRate: number; // units per hour
+  currentPropolisProductionRate: number; // units per hour
 }
 
 export interface GameContextType extends GameState {
@@ -27,3 +29,4 @@ export interface GameContextType extends GameState {
 }
 
 export type ResourceType = 'honey' | 'pollen' | 'propolis' | 'beeCoins';
+

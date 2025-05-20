@@ -11,6 +11,9 @@ export const INITIAL_POLLEN_PRICE = 5; // BeeCoins per unit of pollen
 export const INITIAL_PROPOLIS_PRICE = 15; // BeeCoins per unit of propolis
 
 export const BASE_PRODUCTION_PER_BEE_PER_SECOND = 0.01; // Honey per bee per second
+export const BASE_POLLEN_PRODUCTION_PER_WORKER_PER_SECOND = 0.005; // Pollen per worker bee per second
+export const BASE_PROPOLIS_PRODUCTION_PER_HIVE_LEVEL_PER_SECOND = 0.001; // Propolis per hive level per second
+
 export const POLLEN_CHANCE_ON_COLLECT = 0.1; // 10% chance to get 1 pollen
 export const PROPOLIS_CHANCE_ON_COLLECT = 0.05; // 5% chance to get 1 propolis
 
@@ -33,3 +36,4 @@ export const MARKET_POLLEN_PRICE_MAX = 10;
 
 export const MARKET_PROPOLIS_PRICE_MIN = 10;
 export const MARKET_PROPOLIS_PRICE_MAX = 30;
+

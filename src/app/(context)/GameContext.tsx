@@ -16,6 +16,8 @@ import {
   INITIAL_POLLEN_PRICE,
   INITIAL_PROPOLIS_PRICE,
   BASE_PRODUCTION_PER_BEE_PER_SECOND,
+  BASE_POLLEN_PRODUCTION_PER_WORKER_PER_SECOND,
+  BASE_PROPOLIS_PRODUCTION_PER_HIVE_LEVEL_PER_SECOND,
   POLLEN_CHANCE_ON_COLLECT,
   PROPOLIS_CHANCE_ON_COLLECT,
   HIVE_UPGRADE_COST_MULTIPLIER,
@@ -34,8 +36,16 @@ import type { OptimizeHoneyProductionInput, OptimizeHoneyProductionOutput } from
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
-const calculateProductionRate = (hiveLevel: number, workerBees: number): number => {
+const calculateHoneyProductionRate = (hiveLevel: number, workerBees: number): number => {
   return hiveLevel * workerBees * BASE_PRODUCTION_PER_BEE_PER_SECOND * 3600; // per hour
+};
+
+const calculatePollenProductionRate = (workerBees: number): number => {
+  return workerBees * BASE_POLLEN_PRODUCTION_PER_WORKER_PER_SECOND * 3600; // per hour
+};
+
+const calculatePropolisProductionRate = (hiveLevel: number): number => {
+  return hiveLevel * BASE_PROPOLIS_PRODUCTION_PER_HIVE_LEVEL_PER_SECOND * 3600; // per hour
 };
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
@@ -44,12 +54,13 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     const savedGame = typeof window !== 'undefined' ? localStorage.getItem('buzzingBusinessGame') : null;
     if (savedGame) {
       const parsedGame = JSON.parse(savedGame) as GameState;
-      // Ensure new price fields are initialized if not in saved data
       return {
         ...parsedGame,
         pollenPrice: parsedGame.pollenPrice || INITIAL_POLLEN_PRICE,
         propolisPrice: parsedGame.propolisPrice || INITIAL_PROPOLIS_PRICE,
-        currentHoneyProductionRate: calculateProductionRate(parsedGame.hiveLevel, parsedGame.workerBees),
+        currentHoneyProductionRate: calculateHoneyProductionRate(parsedGame.hiveLevel, parsedGame.workerBees),
+        currentPollenProductionRate: parsedGame.currentPollenProductionRate !== undefined ? parsedGame.currentPollenProductionRate : calculatePollenProductionRate(parsedGame.workerBees),
+        currentPropolisProductionRate: parsedGame.currentPropolisProductionRate !== undefined ? parsedGame.currentPropolisProductionRate : calculatePropolisProductionRate(parsedGame.hiveLevel),
       };
     }
     return {
@@ -63,7 +74,9 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       honeyPrice: INITIAL_HONEY_PRICE,
       pollenPrice: INITIAL_POLLEN_PRICE,
       propolisPrice: INITIAL_PROPOLIS_PRICE,
-      currentHoneyProductionRate: calculateProductionRate(INITIAL_HIVE_LEVEL, INITIAL_WORKER_BEES),
+      currentHoneyProductionRate: calculateHoneyProductionRate(INITIAL_HIVE_LEVEL, INITIAL_WORKER_BEES),
+      currentPollenProductionRate: calculatePollenProductionRate(INITIAL_WORKER_BEES),
+      currentPropolisProductionRate: calculatePropolisProductionRate(INITIAL_HIVE_LEVEL),
     };
   });
 
@@ -80,14 +93,28 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     const effectiveElapsedSeconds = Math.min(elapsedSeconds, maxOfflineSeconds);
 
     let accumulatedHoney = 0;
+    let accumulatedPollen = 0;
+    let accumulatedPropolis = 0;
+
     if (effectiveElapsedSeconds > 0) {
-      const productionRatePerSecond = gameState.currentHoneyProductionRate / 3600;
-      accumulatedHoney = productionRatePerSecond * effectiveElapsedSeconds;
+      const honeyProductionRatePerSecond = gameState.currentHoneyProductionRate / 3600;
+      accumulatedHoney = honeyProductionRatePerSecond * effectiveElapsedSeconds;
+
+      const pollenProductionRatePerSecond = gameState.currentPollenProductionRate / 3600;
+      accumulatedPollen = pollenProductionRatePerSecond * effectiveElapsedSeconds;
       
-      if (accumulatedHoney > 0) {
-         toast({
+      const propolisProductionRatePerSecond = gameState.currentPropolisProductionRate / 3600;
+      accumulatedPropolis = propolisProductionRatePerSecond * effectiveElapsedSeconds;
+      
+      if (accumulatedHoney > 0 || accumulatedPollen > 0 || accumulatedPropolis > 0) {
+        let messages = [];
+        if (accumulatedHoney > 0) messages.push(`${accumulatedHoney.toFixed(2)} honey`);
+        if (accumulatedPollen > 0) messages.push(`${accumulatedPollen.toFixed(0)} pollen`);
+        if (accumulatedPropolis > 0) messages.push(`${accumulatedPropolis.toFixed(0)} propolis`);
+        
+        toast({
           title: "Welcome Back!",
-          description: `You produced ${accumulatedHoney.toFixed(2)} honey while you were away.`,
+          description: `You produced ${messages.join(', ')} while you were away.`,
         });
       }
     }
@@ -95,21 +122,33 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     setGameState(prev => ({
       ...prev,
       honey: prev.honey + accumulatedHoney,
+      pollen: prev.pollen + accumulatedPollen,
+      propolis: prev.propolis + accumulatedPropolis,
       lastUpdated: now,
-      currentHoneyProductionRate: calculateProductionRate(prev.hiveLevel, prev.workerBees),
+      currentHoneyProductionRate: calculateHoneyProductionRate(prev.hiveLevel, prev.workerBees),
+      currentPollenProductionRate: calculatePollenProductionRate(prev.workerBees),
+      currentPropolisProductionRate: calculatePropolisProductionRate(prev.hiveLevel),
     }));
 
     const intervalId = setInterval(() => {
       setGameState(prev => {
-        const productionRatePerSecond = prev.currentHoneyProductionRate / 3600;
-        const newHoney = prev.honey + productionRatePerSecond; // Simulate 1 second of production
+        const honeyProductionPerSecond = prev.currentHoneyProductionRate / 3600;
+        const pollenProductionPerSecond = prev.currentPollenProductionRate / 3600;
+        const propolisProductionPerSecond = prev.currentPropolisProductionRate / 3600;
+
+        const newHoney = prev.honey + honeyProductionPerSecond;
+        const newPollen = prev.pollen + pollenProductionPerSecond;
+        const newPropolis = prev.propolis + propolisProductionPerSecond;
+        
         return {
           ...prev,
           honey: newHoney,
+          pollen: newPollen,
+          propolis: newPropolis,
           lastUpdated: Date.now(),
         };
       });
-    }, 1000); // Update every second for "real-time" feel
+    }, 1000); // Update every second
 
     // Market price fluctuation
     const priceFluctuationInterval = setInterval(() => {
@@ -126,20 +165,21 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       clearInterval(priceFluctuationInterval);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Initial load and setup interval
+  }, []); 
 
   const collectHoney = useCallback(() => {
     const bonusHoney = gameState.currentHoneyProductionRate / 3600 * 10; 
     let newPollen = gameState.pollen;
     let newPropolis = gameState.propolis;
+    let toastMessages: string[] = [];
 
     if (Math.random() < POLLEN_CHANCE_ON_COLLECT) {
       newPollen += 1;
-      toast({ title: "Resource Found!", description: "You collected 1 Pollen!" });
+      toastMessages.push("1 Pollen");
     }
     if (Math.random() < PROPOLIS_CHANCE_ON_COLLECT) {
       newPropolis += 1;
-      toast({ title: "Resource Found!", description: "You collected 1 Propolis!" });
+      toastMessages.push("1 Propolis");
     }
 
     setGameState(prev => ({
@@ -148,7 +188,13 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       pollen: newPollen,
       propolis: newPropolis,
     }));
-    toast({ title: "Honey Collected!", description: `Added ${bonusHoney.toFixed(2)} bonus honey.` });
+    
+    let description = `Added ${bonusHoney.toFixed(2)} bonus honey.`;
+    if (toastMessages.length > 0) {
+        description += ` You also found: ${toastMessages.join(' and ')}!`;
+    }
+    toast({ title: "Bonus Collected!", description });
+
   }, [gameState.currentHoneyProductionRate, gameState.pollen, gameState.propolis, toast]);
 
   const upgradeHive = useCallback(() => {
@@ -160,13 +206,14 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         ...prev,
         beeCoins: prev.beeCoins - cost,
         hiveLevel: newHiveLevel,
-        currentHoneyProductionRate: calculateProductionRate(newHiveLevel, prev.workerBees),
+        currentHoneyProductionRate: calculateHoneyProductionRate(newHiveLevel, prev.workerBees),
+        currentPropolisProductionRate: calculatePropolisProductionRate(newHiveLevel),
       }});
       toast({ title: "Hive Upgraded!", description: `Hive is now level ${gameState.hiveLevel + 1}.` });
     } else {
       toast({ title: "Not enough BeeCoins!", description: `You need ${cost.toFixed(0)} BeeCoins to upgrade.`, variant: "destructive" });
     }
-  }, [gameState.beeCoins, gameState.hiveLevel, toast]);
+  }, [gameState.beeCoins, gameState.hiveLevel, gameState.workerBees, toast]);
 
   const addWorkerBees = useCallback((amount: number) => {
     const cost = WORKER_BEE_COST * amount;
@@ -177,13 +224,14 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         ...prev,
         beeCoins: prev.beeCoins - cost,
         workerBees: newWorkerBees,
-        currentHoneyProductionRate: calculateProductionRate(prev.hiveLevel, newWorkerBees),
+        currentHoneyProductionRate: calculateHoneyProductionRate(prev.hiveLevel, newWorkerBees),
+        currentPollenProductionRate: calculatePollenProductionRate(newWorkerBees),
       }});
       toast({ title: "Worker Bees Acquired!", description: `Added ${amount} worker bees.` });
     } else {
       toast({ title: "Not enough BeeCoins!", description: `You need ${cost} BeeCoins.`, variant: "destructive" });
     }
-  }, [gameState.beeCoins, gameState.hiveLevel, toast]); // Added gameState.hiveLevel as dependency
+  }, [gameState.beeCoins, gameState.hiveLevel, gameState.workerBees, toast]);
 
   const sellHoney = useCallback((amount: number) => {
     if (gameState.honey >= amount) {
@@ -223,7 +271,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       }));
       toast({ title: "Pollen Sold!", description: `You earned ${earnings} BeeCoins.` });
     } else {
-      toast({ title: "Not enough pollen!", description: `You only have ${gameState.pollen} pollen.`, variant: "destructive" });
+      toast({ title: "Not enough pollen!", description: `You only have ${gameState.pollen.toFixed(0)} pollen.`, variant: "destructive" });
     }
   }, [gameState.pollen, gameState.pollenPrice, toast]);
 
@@ -237,7 +285,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       }));
       toast({ title: "Propolis Sold!", description: `You earned ${earnings} BeeCoins.` });
     } else {
-      toast({ title: "Not enough propolis!", description: `You only have ${gameState.propolis} propolis.`, variant: "destructive" });
+      toast({ title: "Not enough propolis!", description: `You only have ${gameState.propolis.toFixed(0)} propolis.`, variant: "destructive" });
     }
   }, [gameState.propolis, gameState.propolisPrice, toast]);
 
@@ -279,3 +327,4 @@ export const useGame = (): GameContextType => {
   }
   return context;
 };
+
