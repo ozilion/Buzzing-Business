@@ -1,0 +1,117 @@
+
+"use client";
+
+import { useState, useEffect } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { useGame } from '@/app/(context)/GameContext';
+import { ArrowUpCircle, PlusCircle, Home, Users, Info } from 'lucide-react';
+import { BASE_HIVE_UPGRADE_COST, HIVE_UPGRADE_COST_MULTIPLIER, WORKER_BEE_COST, INITIAL_HIVE_LEVEL } from '@/lib/constants';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+export function HiveActionsModal() {
+  const { 
+    beeCoins, 
+    hiveLevel: contextHiveLevel, 
+    workerBees: contextWorkerBees, 
+    upgradeHive, 
+    addWorkerBees 
+  } = useGame();
+  
+  const [isOpen, setIsOpen] = useState(false);
+  const [displayHiveLevel, setDisplayHiveLevel] = useState(INITIAL_HIVE_LEVEL);
+  const [displayNextUpgradeCost, setDisplayNextUpgradeCost] = useState(
+    BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, INITIAL_HIVE_LEVEL -1)
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      setDisplayHiveLevel(contextHiveLevel);
+      setDisplayNextUpgradeCost(
+        BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, contextHiveLevel -1)
+      );
+    }
+  }, [isOpen, contextHiveLevel]);
+
+  const handleUpgradeHive = () => {
+    upgradeHive();
+    // Update cost immediately after upgrade attempt if modal stays open
+    setDisplayNextUpgradeCost(
+      BASE_HIVE_UPGRADE_COST * Math.pow(HIVE_UPGRADE_COST_MULTIPLIER, contextHiveLevel) // Use contextHiveLevel as it will be updated
+    );
+  };
+
+  const handleAddBee = () => {
+    addWorkerBees(1);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="icon" className="w-full h-12 border-orange-400 text-orange-300 hover:bg-orange-500/20 hover:text-orange-200 bg-white/10 shadow-md">
+          <Home className="h-6 w-6" />
+          <span className="sr-only">Hive Actions</span>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center">
+            <Home className="mr-2 h-5 w-5 text-primary" /> Hive Management
+          </DialogTitle>
+          <DialogDescription>
+            Upgrade your hive or purchase more worker bees to boost your production.
+            Your BeeCoins: <span className="font-semibold text-primary">{beeCoins.toFixed(0)}</span>
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="space-y-6 py-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center"><ArrowUpCircle className="mr-2 h-5 w-5" />Upgrade Hive</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p className="text-sm text-muted-foreground">Current Level: {displayHiveLevel}</p>
+              <p className="text-sm text-muted-foreground">Next Upgrade Cost: <span className="font-semibold text-primary">{displayNextUpgradeCost.toFixed(0)}</span> BeeCoins</p>
+              <Button 
+                onClick={handleUpgradeHive} 
+                className="w-full bg-primary hover:bg-primary/90"
+                disabled={beeCoins < displayNextUpgradeCost}
+              >
+                Upgrade to Level {displayHiveLevel + 1}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center"><PlusCircle className="mr-2 h-5 w-5" />Add Worker Bee</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p className="text-sm text-muted-foreground">Current Worker Bees: {contextWorkerBees}</p>
+              <p className="text-sm text-muted-foreground">Cost per Bee: <span className="font-semibold text-primary">{WORKER_BEE_COST}</span> BeeCoins</p>
+              <Button 
+                onClick={handleAddBee} 
+                className="w-full bg-primary hover:bg-primary/90"
+                disabled={beeCoins < WORKER_BEE_COST}
+              >
+                Add 1 Worker Bee
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setIsOpen(false)}>Close</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useGame } from '@/app/(context)/GameContext';
-import { BrainCircuitIcon, Sparkles, Loader2, Brain } from 'lucide-react';
+import { Brain, Sparkles, Loader2 } from 'lucide-react';
 import type { OptimizeHoneyProductionInput, OptimizeHoneyProductionOutput } from '@/ai/flows/optimize-honey-production';
 import { FLOWER_TYPES } from '@/lib/constants';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -107,8 +107,9 @@ export function AIOptimizationModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="w-full flex-col h-auto py-2 text-xs sm:text-sm border-blue-400 text-blue-300 hover:bg-blue-500/20 hover:text-blue-200 bg-white/10 shadow-md">
-          <Brain className="mb-1 h-5 w-5" /> AI Tips
+        <Button variant="outline" size="icon" className="w-full h-12 border-blue-400 text-blue-300 hover:bg-blue-500/20 hover:text-blue-200 bg-white/10 shadow-md">
+          <Brain className="h-6 w-6" />
+          <span className="sr-only">AI Tips</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md md:max-w-lg">

@@ -6,9 +6,11 @@ import { ResourceCard } from './ResourceCard';
 import { INITIAL_BEE_COINS, INITIAL_HONEY, INITIAL_POLLEN, INITIAL_PROPOLIS } from '@/lib/constants';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { PackagePlus } from 'lucide-react';
 
 export function TopResourceDisplay() {
-  const { honey, pollen, propolis, beeCoins } = useGame();
+  const { honey, pollen, propolis, beeCoins, collectHoney } = useGame();
 
   const [displayHoney, setDisplayHoney] = useState(INITIAL_HONEY);
   const [displayPollen, setDisplayPollen] = useState(INITIAL_POLLEN);
@@ -25,11 +27,23 @@ export function TopResourceDisplay() {
   const cardClassName = "bg-transparent border-none shadow-none text-white [&_.text-muted-foreground]:text-gray-300 [&_.text-2xl]:text-lg [&_.text-xs]:text-[10px] p-1";
 
   return (
-    <div className="p-2 bg-black/40 backdrop-blur-sm grid grid-cols-4 gap-1 sticky top-0 z-10">
-      <ResourceCard type="honey" value={displayHoney} className={cn(cardClassName, "[&_.text-2xl]:text-yellow-300")} />
-      <ResourceCard type="pollen" value={displayPollen} className={cn(cardClassName, "[&_.text-2xl]:text-purple-300")} />
-      <ResourceCard type="propolis" value={displayPropolis} className={cn(cardClassName, "[&_.text-2xl]:text-green-300")} />
-      <ResourceCard type="beeCoins" value={displayBeeCoins} className={cn(cardClassName, "[&_.text-2xl]:text-amber-400")} />
+    <div className="p-2 bg-black/40 backdrop-blur-sm sticky top-0 z-10">
+      <div className="grid grid-cols-4 gap-1">
+        <ResourceCard type="honey" value={displayHoney} className={cn(cardClassName, "[&_.text-2xl]:text-yellow-300")} />
+        <ResourceCard type="pollen" value={displayPollen} className={cn(cardClassName, "[&_.text-2xl]:text-purple-300")} />
+        <ResourceCard type="propolis" value={displayPropolis} className={cn(cardClassName, "[&_.text-2xl]:text-green-300")} />
+        <ResourceCard type="beeCoins" value={displayBeeCoins} className={cn(cardClassName, "[&_.text-2xl]:text-amber-400")} />
+      </div>
+      <Button
+        onClick={collectHoney}
+        variant="ghost"
+        size="icon"
+        className="absolute bottom-2 left-2 h-9 w-9 bg-yellow-500/30 hover:bg-yellow-500/50 text-white shadow-md"
+        aria-label="Collect Bonus"
+      >
+        <PackagePlus className="h-5 w-5" />
+      </Button>
     </div>
   );
 }
+
