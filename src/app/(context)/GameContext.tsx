@@ -268,7 +268,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       setGameState(prev => {
         const newHiveLevel = prev.hiveLevel + 1;
         const newMaxBees = calculateMaxWorkerBees(newHiveLevel);
-        const newWorkerBees = Math.min(prev.workerBees, newMaxBees); // Ensure worker bees don't exceed new max
+        const newWorkerBees = Math.min(prev.workerBees, newMaxBees); 
         return {
           ...prev,
           beeCoins: prev.beeCoins - cost,
@@ -322,56 +322,70 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   }, [gameState.beeCoins, gameState.hiveLevel, gameState.workerBees, gameState.maxWorkerBees, toast]);
 
   const sellHoney = useCallback((amount: number) => {
-    if (gameState.honey >= amount) {
-      const earnings = Math.floor(amount * gameState.honeyPrice);
+    const roundedAmount = parseFloat(amount.toFixed(2));
+
+    if (gameState.honey >= roundedAmount && roundedAmount > 0) {
+      const earnings = Math.floor(roundedAmount * gameState.honeyPrice);
       setGameState(prev => ({
         ...prev,
-        honey: prev.honey - amount,
+        honey: prev.honey - roundedAmount,
         beeCoins: prev.beeCoins + earnings,
       }));
       toast({ title: "Honey Sold!", description: `You earned ${earnings} BeeCoins.` });
-    } else {
+    } else if (roundedAmount <= 0) {
+      toast({ title: "Invalid amount!", description: `Amount to sell must be positive.`, variant: "destructive" });
+    }
+     else {
       toast({ title: "Not enough honey!", description: `You only have ${gameState.honey.toFixed(2)} honey.`, variant: "destructive" });
     }
   }, [gameState.honey, gameState.honeyPrice, toast]);
 
   const buyHoney = useCallback((amount: number) => {
-    const cost = Math.floor(amount * gameState.honeyPrice);
-    if (gameState.beeCoins >= cost) {
+    const roundedAmount = parseFloat(amount.toFixed(2));
+    const cost = Math.floor(roundedAmount * gameState.honeyPrice);
+    if (gameState.beeCoins >= cost && roundedAmount > 0) {
       setGameState(prev => ({
         ...prev,
-        honey: prev.honey + amount,
+        honey: prev.honey + roundedAmount,
         beeCoins: prev.beeCoins - cost,
       }));
-      toast({ title: "Honey Purchased!", description: `You bought ${amount} honey for ${cost} BeeCoins.` });
+      toast({ title: "Honey Purchased!", description: `You bought ${roundedAmount.toFixed(2)} honey for ${cost} BeeCoins.` });
+    } else if (roundedAmount <= 0) {
+       toast({ title: "Invalid amount!", description: `Amount to buy must be positive.`, variant: "destructive" });
     } else {
       toast({ title: "Not enough BeeCoins!", description: `You need ${cost} BeeCoins.`, variant: "destructive" });
     }
   }, [gameState.beeCoins, gameState.honeyPrice, toast]);
 
   const sellPollen = useCallback((amount: number) => {
-    if (gameState.pollen >= amount) {
-      const earnings = Math.floor(amount * gameState.pollenPrice);
+    const roundedAmount = Math.floor(amount); // Pollen is integer
+    if (gameState.pollen >= roundedAmount && roundedAmount > 0) {
+      const earnings = Math.floor(roundedAmount * gameState.pollenPrice);
       setGameState(prev => ({
         ...prev,
-        pollen: prev.pollen - amount,
+        pollen: prev.pollen - roundedAmount,
         beeCoins: prev.beeCoins + earnings,
       }));
       toast({ title: "Pollen Sold!", description: `You earned ${earnings} BeeCoins.` });
+    } else if (roundedAmount <= 0) {
+      toast({ title: "Invalid amount!", description: `Amount to sell must be positive.`, variant: "destructive" });
     } else {
       toast({ title: "Not enough pollen!", description: `You only have ${gameState.pollen.toFixed(0)} pollen.`, variant: "destructive" });
     }
   }, [gameState.pollen, gameState.pollenPrice, toast]);
 
   const sellPropolis = useCallback((amount: number) => {
-    if (gameState.propolis >= amount) {
-      const earnings = Math.floor(amount * gameState.propolisPrice);
+    const roundedAmount = Math.floor(amount); // Propolis is integer
+    if (gameState.propolis >= roundedAmount && roundedAmount > 0) {
+      const earnings = Math.floor(roundedAmount * gameState.propolisPrice);
       setGameState(prev => ({
         ...prev,
-        propolis: prev.propolis - amount,
+        propolis: prev.propolis - roundedAmount,
         beeCoins: prev.beeCoins + earnings,
       }));
       toast({ title: "Propolis Sold!", description: `You earned ${earnings} BeeCoins.` });
+    } else if (roundedAmount <= 0) {
+      toast({ title: "Invalid amount!", description: `Amount to sell must be positive.`, variant: "destructive" });
     } else {
       toast({ title: "Not enough propolis!", description: `You only have ${gameState.propolis.toFixed(0)} propolis.`, variant: "destructive" });
     }
