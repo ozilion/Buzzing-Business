@@ -1,6 +1,7 @@
+
 import type { ResourceType } from '@/lib/types';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Droplets, Gem, CircleDollarSign, type LucideIcon } from 'lucide-react';
+import { CircleDollarSign, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { cn, formatLargeNumber } from '@/lib/utils';
 
@@ -11,9 +12,9 @@ interface ResourceCardProps {
 }
 
 const iconMap: Record<ResourceType, LucideIcon | string> = {
-  honey: Droplets,
-  pollen: "https://cdn-icons-png.freepik.com/256/1728/1728708.png", // New pollen icon URL
-  propolis: Gem,
+  honey: "/assets/images/honey.png",
+  pollen: "/assets/images/pollen.png",
+  propolis: "/assets/images/propolis.png",
   beeCoins: CircleDollarSign,
 };
 
