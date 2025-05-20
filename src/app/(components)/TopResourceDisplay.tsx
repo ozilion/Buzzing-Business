@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 export function TopResourceDisplay() {
-  const { honey, pollen, propolis, beeCoins } = useGame(); // Removed collectHoney
+  const { honey, pollen, propolis, beeCoins } = useGame();
 
   const [displayHoney, setDisplayHoney] = useState(INITIAL_HONEY);
   const [displayPollen, setDisplayPollen] = useState(INITIAL_POLLEN);
@@ -25,14 +25,13 @@ export function TopResourceDisplay() {
   const cardClassName = "bg-transparent border-none shadow-none text-white [&_.text-muted-foreground]:text-gray-300 [&_.text-2xl]:text-lg [&_.text-xs]:text-[10px] p-1";
 
   return (
-    <div className="p-2 bg-black/40 backdrop-blur-sm sticky top-0 z-10">
+    <div className="p-1 bg-black/40 backdrop-blur-sm sticky top-0 z-10"> {/* Reduced padding from p-2 to p-1 */}
       <div className="grid grid-cols-4 gap-1">
         <ResourceCard type="honey" value={displayHoney} className={cn(cardClassName, "[&_.text-2xl]:text-yellow-300")} />
         <ResourceCard type="pollen" value={displayPollen} className={cn(cardClassName, "[&_.text-2xl]:text-purple-300")} />
         <ResourceCard type="propolis" value={displayPropolis} className={cn(cardClassName, "[&_.text-2xl]:text-green-300")} />
         <ResourceCard type="beeCoins" value={displayBeeCoins} className={cn(cardClassName, "[&_.text-2xl]:text-amber-400")} />
       </div>
-      {/* Bonus button removed from here */}
     </div>
   );
 }

@@ -8,22 +8,21 @@ import { MarketModal } from '@/app/(components)/MarketModal';
 import { AIOptimizationModal } from '@/app/(components)/AIOptimizationModal';
 import { HiveActionsModal } from '@/app/(components)/HiveActionsModal';
 import { useGame } from '@/app/(context)/GameContext';
-import { ThemeToggle } from '@/app/(components)/ThemeToggle';
-import { Users, Home as HomeIcon, PackagePlus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Users, Home as HomeIcon } from 'lucide-react'; // PackagePlus removed, ThemeToggle removed
 import {
   INITIAL_WORKER_BEES,
   INITIAL_HIVE_LEVEL,
   BASE_PRODUCTION_PER_BEE_PER_SECOND,
 } from '@/lib/constants';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { formatLargeNumber } from '@/lib/utils'; // Import formatLargeNumber
 
 export default function HomePage() {
   const {
     hiveLevel: contextHiveLevel,
     workerBees: contextWorkerBees,
     currentHoneyProductionRate: contextHoneyProductionRate,
-    collectHoney, // Added collectHoney
+    // collectHoney removed as the button is being removed
   } = useGame();
 
   const [displayWorkerBees, setDisplayWorkerBees] = useState(INITIAL_WORKER_BEES);
@@ -47,31 +46,21 @@ export default function HomePage() {
       >
         <TopResourceDisplay />
 
-        {/* Bonus Button - Positioned below TopResourceDisplay */}
-        <Button
-          onClick={collectHoney}
-          variant="ghost"
-          size="icon"
-          className="absolute top-[80px] left-3 z-20 h-9 w-9 bg-yellow-500/30 hover:bg-yellow-500/50 text-white shadow-md"
-          aria-label="Collect Bonus"
-        >
-          <PackagePlus className="h-5 w-5" />
-        </Button>
+        {/* Bonus Button Removed */}
 
         <ScrollArea className="flex-1">
-          <main className="flex flex-col items-center justify-center p-4 min-h-[calc(100%-140px)] relative"> {/* Adjusted min-height slightly for new layout */}
-            <div className="text-center my-auto"> {/* Vertically centers the hive section if space allows */}
-              <div className="relative inline-block"> {/* Wrapper for image and info card to allow absolute positioning of info card */}
+          <main className="flex flex-col items-center justify-center p-4 min-h-[calc(100%-120px)] relative"> {/* Adjusted min-height based on top/bottom bar heights */}
+            <div className="text-center my-auto"> 
+              <div className="relative inline-block"> 
                 <Image
                   src="/assets/images/hive.png"
                   alt="Arı Kovanı"
                   width={180}
                   height={180}
-                  className="object-contain drop-shadow-xl" // mx-auto removed, inline-block with text-center on parent handles centering
+                  className="object-contain drop-shadow-xl" 
                   data-ai-hint="cartoon beehive"
                   priority
                 />
-                {/* Hive Info Card - Positioned top-right of the image */}
                 <div className="absolute top-1 -right-2 p-2 text-on-image-bg space-y-1 rounded-md max-w-[150px] text-xs shadow-lg">
                   <div className="flex items-center gap-1">
                     <Users className="h-3 w-3 text-yellow-300" />
@@ -82,7 +71,7 @@ export default function HomePage() {
                     <span>Level: <span className="font-bold">{displayHiveLevel}</span></span>
                   </div>
                   <p className="text-left">
-                      Prod: <span className="font-semibold">{displayCurrentHoneyProductionRate.toFixed(2)}</span>/hr
+                      Prod: <span className="font-semibold">{formatLargeNumber(displayCurrentHoneyProductionRate)}</span>/hr
                   </p>
                 </div>
               </div>
@@ -90,9 +79,7 @@ export default function HomePage() {
           </main>
         </ScrollArea>
 
-        <div className="absolute top-3 right-3 z-20">
-            <ThemeToggle />
-        </div>
+        {/* ThemeToggle Removed */}
 
         <footer className="p-3 bg-black/60 backdrop-blur-lg border-t border-white/20">
           <div className="grid grid-cols-3 gap-2">
@@ -100,7 +87,6 @@ export default function HomePage() {
             <MarketModal />
             <AIOptimizationModal />
           </div>
-          {/* Copyright text removed */}
         </footer>
       </div>
     </div>
