@@ -74,10 +74,14 @@ const POTENTIAL_FLOWER_TARGETS = flowerVisualPositions.map(p => {
   else if (p.size.includes('w-12')) sizePx = 48; // 3rem
   else if (p.size.includes('w-14')) sizePx = 56; // 3.5rem
 
-  const targetX = Math.round(leftPercent * APPROX_MAIN_CONTENT_WIDTH + sizePx / 2);
-  // Add main's top padding (p-4 means 16px, but since bee is child of main, 0 is main's content edge)
-  // The flower container's top is FLOWER_CONTAINER_TOP_OFFSET from main's top content edge
-  const targetY = Math.round(FLOWER_CONTAINER_TOP_OFFSET + (topPercent * FLOWER_CONTAINER_HEIGHT) + (sizePx / 2));
+  // Calculate the center of the flower
+  const centerX = Math.round(leftPercent * APPROX_MAIN_CONTENT_WIDTH + sizePx / 2);
+  const centerY = Math.round(FLOWER_CONTAINER_TOP_OFFSET + (topPercent * FLOWER_CONTAINER_HEIGHT) + (sizePx / 2));
+  
+  // Adjust the target point: 10px right, 10px down from the center
+  const targetX = centerX + 10;
+  const targetY = centerY + 10;
+
   return { x: targetX, y: targetY };
 });
 
@@ -240,4 +244,6 @@ export default function HomePage() {
     </div>
   );
 }
+    
+
     
