@@ -76,8 +76,8 @@ const POTENTIAL_FLOWER_TARGETS = flowerVisualPositions.map(p => {
   const centerX = Math.round(leftPercent * APPROX_MAIN_CONTENT_WIDTH + sizePx / 2);
   const centerY = Math.round(FLOWER_CONTAINER_TOP_OFFSET + (topPercent * FLOWER_CONTAINER_HEIGHT) + (sizePx / 2));
   
-  const targetX = centerX + 10; // 10px right of center
-  const targetY = centerY + 10; // 10px down from center
+  const targetX = centerX + 15; // 10px right of center
+  const targetY = centerY + 15; // 10px down from center
 
   return { x: targetX, y: targetY };
 });
