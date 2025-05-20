@@ -32,7 +32,7 @@ export function ResourceCard({ type, value, className }: ResourceCardProps) {
         )}
       </CardHeader>
       <CardContent className="p-0 text-center">
-        <div className="text-2xl font-bold leading-none">
+        <div className="text-lg font-bold leading-none">
           {displayValue}
         </div>
       </CardContent>
