@@ -19,13 +19,13 @@ import { formatLargeNumber } from '@/lib/utils';
 
 // Define flower data: 3 types, 4 of each = 12 flowers
 const flowerTypes = [
-  '/assets/images/flowers/flower_1.gif',
-  '/assets/images/flowers/flower_2.gif',
-  '/assets/images/flowers/flower_3.gif',
+  '/assets/images/flowers/sunflower.gif',
+  '/assets/images/flowers/rose.gif',
+  '/assets/images/flowers/growing_plant.gif',
 ];
 
 const flowersData = Array.from({ length: 12 }).map((_, index) => {
-  const typeIndex = index % 3;
+  const typeIndex = index % flowerTypes.length; // Use flowerTypes.length for safety
   // Define varied positions and styles
   // These are examples, you can fine-tune them for better visual scattering
   const positions = [
@@ -84,7 +84,7 @@ export default function HomePage() {
 
         <ScrollArea className="flex-1">
           <main className="flex flex-col items-center justify-end p-4 pb-8 min-h-[calc(100%-100px)] relative">
-            <div className="text-center mt-12">
+            <div className="text-center mt-12"> {/* Adjusted margin-top here */}
               <div className="relative inline-block">
                 <Image
                   src="/assets/images/hive.png"
