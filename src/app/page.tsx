@@ -8,21 +8,20 @@ import { MarketModal } from '@/app/(components)/MarketModal';
 import { AIOptimizationModal } from '@/app/(components)/AIOptimizationModal';
 import { HiveActionsModal } from '@/app/(components)/HiveActionsModal';
 import { useGame } from '@/app/(context)/GameContext';
-import { Users, Home as HomeIcon } from 'lucide-react'; // PackagePlus removed, ThemeToggle removed
+import { Users, Home as HomeIcon } from 'lucide-react';
 import {
   INITIAL_WORKER_BEES,
   INITIAL_HIVE_LEVEL,
   BASE_PRODUCTION_PER_BEE_PER_SECOND,
 } from '@/lib/constants';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { formatLargeNumber } from '@/lib/utils'; // Import formatLargeNumber
+import { formatLargeNumber } from '@/lib/utils';
 
 export default function HomePage() {
   const {
     hiveLevel: contextHiveLevel,
     workerBees: contextWorkerBees,
     currentHoneyProductionRate: contextHoneyProductionRate,
-    // collectHoney removed as the button is being removed
   } = useGame();
 
   const [displayWorkerBees, setDisplayWorkerBees] = useState(INITIAL_WORKER_BEES);
@@ -46,21 +45,22 @@ export default function HomePage() {
       >
         <TopResourceDisplay />
 
-        {/* Bonus Button Removed */}
-
         <ScrollArea className="flex-1">
-          <main className="flex flex-col items-center justify-center p-4 min-h-[calc(100%-120px)] relative"> {/* Adjusted min-height based on top/bottom bar heights */}
-            <div className="text-center my-auto"> 
-              <div className="relative inline-block"> 
+          {/* Main content area: Pushes content (hive) to the bottom and adds padding */}
+          <main className="flex flex-col items-center justify-end p-4 pb-8 min-h-[calc(100%-100px)] relative">
+            {/* Removed my-auto to stop vertical centering, text-center for horizontal */}
+            <div className="text-center">
+              <div className="relative inline-block">
                 <Image
                   src="/assets/images/hive.png"
                   alt="Arı Kovanı"
                   width={180}
                   height={180}
-                  className="object-contain drop-shadow-xl" 
+                  className="object-contain drop-shadow-xl"
                   data-ai-hint="cartoon beehive"
                   priority
                 />
+                {/* Info card positioned relative to the hive image */}
                 <div className="absolute top-1 -right-2 p-2 text-on-image-bg space-y-1 rounded-md max-w-[150px] text-xs shadow-lg">
                   <div className="flex items-center gap-1">
                     <Users className="h-3 w-3 text-yellow-300" />
@@ -78,8 +78,6 @@ export default function HomePage() {
             </div>
           </main>
         </ScrollArea>
-
-        {/* ThemeToggle Removed */}
 
         <footer className="p-3 bg-black/60 backdrop-blur-lg border-t border-white/20">
           <div className="grid grid-cols-3 gap-2">
