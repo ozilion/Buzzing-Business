@@ -58,7 +58,7 @@ export function HiveManagementCard() {
       <CardContent className="space-y-6">
         <div className="relative w-full h-48 rounded-md overflow-hidden mb-4">
             <Image
-              src="https://placehold.co/600x400.png" 
+              src="https://cdn.pixabay.com/photo/2017/07/10/19/49/wild-flower-meadow-2491259_1280.jpg"
               alt="Geniş bir kır bahçesi ve arı kovanları"
               layout="fill"
               objectFit="cover"
