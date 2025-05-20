@@ -58,21 +58,21 @@ export function HiveManagementCard() {
       <CardContent className="space-y-6">
         <div className="relative w-full h-48 rounded-md overflow-hidden mb-4">
             <Image
-              src="/assets/scene.png" // Path relative to the 'public' directory
+              src="https://placehold.co/600x400.png" 
               alt="Geniş bir kır bahçesi ve arı kovanları"
               layout="fill"
               objectFit="cover"
               className="z-0"
-              data-ai-hint="flower meadow beehives flying bees"
+              data-ai-hint="realistic flower meadow beehives"
             />
             <div className="absolute inset-0 flex items-center justify-center z-10">
               <div className="relative w-32 h-32"> 
                 <Image
-                  src="/assets/hive.png" // Path relative to the 'public' directory
+                  src="https://placehold.co/150x150.png" 
                   alt="Arı Kovanı"
                   layout="fill"
                   objectFit="contain"
-                  data-ai-hint="beehive detailed"
+                  data-ai-hint="realistic beehive detailed"
                 />
               </div>
             </div>
