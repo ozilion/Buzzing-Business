@@ -56,8 +56,8 @@ export function HiveActionsModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="w-full h-12 border-orange-400 text-orange-300 hover:bg-orange-500/20 hover:text-orange-200 bg-white/10 shadow-md">
-          <Home className="h-6 w-6" />
+        <Button variant="outline" size="icon" className="w-full h-10 border-orange-400 text-orange-300 hover:bg-orange-500/20 hover:text-orange-200 bg-white/10 shadow-md">
+          <Home className="h-5 w-5" />
           <span className="sr-only">Hive Actions</span>
         </Button>
       </DialogTrigger>

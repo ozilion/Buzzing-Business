@@ -54,7 +54,7 @@ export function AIOptimizationModal() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       hiveLevel,
-      workerBeeCount: workerBees, 
+      workerBeeCount: workerBees,
       flowerTypes: [FLOWER_TYPES[0]],
       currentHoneyProductionRate,
       pollen,
@@ -107,8 +107,8 @@ export function AIOptimizationModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="w-full h-12 border-blue-400 text-blue-300 hover:bg-blue-500/20 hover:text-blue-200 bg-white/10 shadow-md">
-          <Brain className="h-6 w-6" />
+        <Button variant="outline" size="icon" className="w-full h-10 border-blue-400 text-blue-300 hover:bg-blue-500/20 hover:text-blue-200 bg-white/10 shadow-md">
+          <Brain className="h-5 w-5" />
           <span className="sr-only">AI Tips</span>
         </Button>
       </DialogTrigger>

@@ -116,7 +116,7 @@ body {
   }
 
   .mobile-screen {
-    @apply w-full max-w-[420px] h-[750px] max-h-[90vh] bg-cover bg-center rounded-2xl shadow-2xl overflow-hidden flex flex-col relative;
+    @apply w-full max-w-[420px] h-[800px] max-h-[95vh] bg-cover bg-center rounded-2xl shadow-2xl overflow-hidden flex flex-col relative; /* Updated height */
     /* Default light theme background for the game screen if image fails */
     background-color: hsl(var(--background)); 
   }

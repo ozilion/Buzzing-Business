@@ -6,11 +6,9 @@ import { ResourceCard } from './ResourceCard';
 import { INITIAL_BEE_COINS, INITIAL_HONEY, INITIAL_POLLEN, INITIAL_PROPOLIS } from '@/lib/constants';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { PackagePlus } from 'lucide-react';
 
 export function TopResourceDisplay() {
-  const { honey, pollen, propolis, beeCoins, collectHoney } = useGame();
+  const { honey, pollen, propolis, beeCoins } = useGame(); // Removed collectHoney
 
   const [displayHoney, setDisplayHoney] = useState(INITIAL_HONEY);
   const [displayPollen, setDisplayPollen] = useState(INITIAL_POLLEN);
@@ -34,16 +32,7 @@ export function TopResourceDisplay() {
         <ResourceCard type="propolis" value={displayPropolis} className={cn(cardClassName, "[&_.text-2xl]:text-green-300")} />
         <ResourceCard type="beeCoins" value={displayBeeCoins} className={cn(cardClassName, "[&_.text-2xl]:text-amber-400")} />
       </div>
-      <Button
-        onClick={collectHoney}
-        variant="ghost"
-        size="icon"
-        className="absolute bottom-2 left-2 h-9 w-9 bg-yellow-500/30 hover:bg-yellow-500/50 text-white shadow-md"
-        aria-label="Collect Bonus"
-      >
-        <PackagePlus className="h-5 w-5" />
-      </Button>
+      {/* Bonus button removed from here */}
     </div>
   );
 }
-

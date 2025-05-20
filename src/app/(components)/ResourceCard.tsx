@@ -1,7 +1,7 @@
 import type { ResourceType } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Droplets, Flower2, Gem, CircleDollarSign, type LucideIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, formatLargeNumber } from '@/lib/utils';
 
 interface ResourceCardProps {
   type: ResourceType;
@@ -26,6 +26,7 @@ const nameMap: Record<ResourceType, string> = {
 export function ResourceCard({ type, value, className }: ResourceCardProps) {
   const Icon = iconMap[type];
   const name = nameMap[type];
+  const displayValue = formatLargeNumber(value);
 
   return (
     <Card className={cn("shadow-lg", className)}>
@@ -35,7 +36,7 @@ export function ResourceCard({ type, value, className }: ResourceCardProps) {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">
-          {value % 1 !== 0 ? value.toFixed(2) : value}
+          {displayValue}
         </div>
         {type === 'honey' && <p className="text-xs text-muted-foreground">units</p>}
         {type === 'beeCoins' && <p className="text-xs text-muted-foreground">coins</p>}

@@ -108,8 +108,8 @@ export function MarketModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="w-full h-12 border-green-400 text-green-300 hover:bg-green-500/20 hover:text-green-200 bg-white/10 shadow-md">
-          <ShoppingCart className="h-6 w-6" />
+        <Button variant="outline" size="icon" className="w-full h-10 border-green-400 text-green-300 hover:bg-green-500/20 hover:text-green-200 bg-white/10 shadow-md">
+          <ShoppingCart className="h-5 w-5" />
           <span className="sr-only">Market</span>
         </Button>
       </DialogTrigger>

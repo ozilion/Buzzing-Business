@@ -6,10 +6,11 @@ import { useState, useEffect } from 'react';
 import { TopResourceDisplay } from '@/app/(components)/TopResourceDisplay';
 import { MarketModal } from '@/app/(components)/MarketModal';
 import { AIOptimizationModal } from '@/app/(components)/AIOptimizationModal';
-import { HiveActionsModal } from '@/app/(components)/HiveActionsModal'; // Yeni modal import edildi
+import { HiveActionsModal } from '@/app/(components)/HiveActionsModal';
 import { useGame } from '@/app/(context)/GameContext';
 import { ThemeToggle } from '@/app/(components)/ThemeToggle';
-import { Users, Home as HomeIcon } from 'lucide-react'; // Home Icon import edildi
+import { Users, Home as HomeIcon, PackagePlus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   INITIAL_WORKER_BEES,
   INITIAL_HIVE_LEVEL,
@@ -22,6 +23,7 @@ export default function HomePage() {
     hiveLevel: contextHiveLevel,
     workerBees: contextWorkerBees,
     currentHoneyProductionRate: contextHoneyProductionRate,
+    collectHoney, // Added collectHoney
   } = useGame();
 
   const [displayWorkerBees, setDisplayWorkerBees] = useState(INITIAL_WORKER_BEES);
@@ -39,39 +41,55 @@ export default function HomePage() {
 
   return (
     <div className="mobile-screen-desktop-wrapper">
-      <div 
-        className="mobile-screen bg-cover bg-center" 
+      <div
+        className="mobile-screen bg-cover bg-center"
         style={{ backgroundImage: 'url(/assets/images/scene.png)' }}
       >
         <TopResourceDisplay />
-        
+
+        {/* Bonus Button - Positioned below TopResourceDisplay */}
+        <Button
+          onClick={collectHoney}
+          variant="ghost"
+          size="icon"
+          className="absolute top-[80px] left-3 z-20 h-9 w-9 bg-yellow-500/30 hover:bg-yellow-500/50 text-white shadow-md"
+          aria-label="Collect Bonus"
+        >
+          <PackagePlus className="h-5 w-5" />
+        </Button>
+
         <ScrollArea className="flex-1">
-          <main className="flex flex-col items-center justify-center p-4 min-h-[calc(100%-160px)] relative"> {/* Adjust min-height based on header/footer & add relative for positioning */}
-            <div className="text-center my-auto"> {/* Added my-auto for vertical centering if space allows */}
-              <Image 
-                src="/assets/images/hive.png" 
-                alt="Arı Kovanı" 
-                width={180} 
-                height={180} 
-                className="object-contain drop-shadow-xl mx-auto"
-                data-ai-hint="cartoon beehive"
-                priority
-              />
-              <div className="mt-6 p-4 text-on-image-bg space-y-2">
-                <div className="flex items-center justify-center gap-2">
-                  <Users className="h-6 w-6 text-yellow-300" />
-                  <p className="text-base">Worker Bees: <span className="font-bold text-lg">{displayWorkerBees}</span></p>
+          <main className="flex flex-col items-center justify-center p-4 min-h-[calc(100%-140px)] relative"> {/* Adjusted min-height slightly for new layout */}
+            <div className="text-center my-auto"> {/* Vertically centers the hive section if space allows */}
+              <div className="relative inline-block"> {/* Wrapper for image and info card to allow absolute positioning of info card */}
+                <Image
+                  src="/assets/images/hive.png"
+                  alt="Arı Kovanı"
+                  width={180}
+                  height={180}
+                  className="object-contain drop-shadow-xl" // mx-auto removed, inline-block with text-center on parent handles centering
+                  data-ai-hint="cartoon beehive"
+                  priority
+                />
+                {/* Hive Info Card - Positioned top-right of the image */}
+                <div className="absolute top-1 -right-2 p-2 text-on-image-bg space-y-1 rounded-md max-w-[150px] text-xs shadow-lg">
+                  <div className="flex items-center gap-1">
+                    <Users className="h-3 w-3 text-yellow-300" />
+                    <span>Bees: <span className="font-bold">{displayWorkerBees}</span></span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <HomeIcon className="h-3 w-3 text-yellow-300" />
+                    <span>Level: <span className="font-bold">{displayHiveLevel}</span></span>
+                  </div>
+                  <p className="text-left">
+                      Prod: <span className="font-semibold">{displayCurrentHoneyProductionRate.toFixed(2)}</span>/hr
+                  </p>
                 </div>
-                <div className="flex items-center justify-center gap-2">
-                  <HomeIcon className="h-6 w-6 text-yellow-300" />
-                  <p className="text-base">Hive Level: <span className="font-bold text-lg">{displayHiveLevel}</span></p>
-                </div>
-                <p className="text-sm">Honey Production: <span className="font-semibold">{displayCurrentHoneyProductionRate.toFixed(2)}</span> units/hr</p>
               </div>
             </div>
           </main>
         </ScrollArea>
-        
+
         <div className="absolute top-3 right-3 z-20">
             <ThemeToggle />
         </div>
@@ -82,9 +100,7 @@ export default function HomePage() {
             <MarketModal />
             <AIOptimizationModal />
           </div>
-          <p className="text-center text-xs text-gray-400 mt-3 pb-1">
-            &copy; {new Date().getFullYear()} Buzzing Business
-          </p>
+          {/* Copyright text removed */}
         </footer>
       </div>
     </div>
