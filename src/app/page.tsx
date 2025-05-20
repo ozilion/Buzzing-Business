@@ -17,6 +17,43 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatLargeNumber } from '@/lib/utils';
 
+// Define flower data: 3 types, 4 of each = 12 flowers
+const flowerTypes = [
+  '/assets/images/flowers/flower_1.gif',
+  '/assets/images/flowers/flower_2.gif',
+  '/assets/images/flowers/flower_3.gif',
+];
+
+const flowersData = Array.from({ length: 12 }).map((_, index) => {
+  const typeIndex = index % 3;
+  // Define varied positions and styles
+  // These are examples, you can fine-tune them for better visual scattering
+  const positions = [
+    { top: '5%', left: '10%', size: 'w-10 h-10', rotate: 'rotate-[-15deg]' },
+    { top: '15%', left: '30%', size: 'w-12 h-12', rotate: 'rotate-[5deg]' },
+    { top: '8%', left: '50%', size: 'w-10 h-10', rotate: 'rotate-[20deg]' },
+    { top: '20%', left: '70%', size: 'w-14 h-14', rotate: 'rotate-[-10deg]' },
+    { top: '35%', left: '85%', size: 'w-10 h-10', rotate: 'rotate-[25deg]' },
+    { top: '40%', left: '20%', size: 'w-12 h-12', rotate: 'rotate-[-5deg]' },
+    { top: '50%', left: '40%', size: 'w-10 h-10', rotate: 'rotate-[15deg]' },
+    { top: '55%', left: '60%', size: 'w-14 h-14', rotate: 'rotate-[-20deg]' },
+    { top: '65%', left: '5%', size: 'w-12 h-12', rotate: 'rotate-[10deg]' },
+    { top: '70%', left: '75%', size: 'w-10 h-10', rotate: 'rotate-[-8deg]' },
+    { top: '80%', left: '30%', size: 'w-12 h-12', rotate: 'rotate-[18deg]' },
+    { top: '60%', left: '90%', size: 'w-10 h-10', rotate: 'rotate-[-22deg]' },
+  ];
+  const style = positions[index % positions.length]; // Cycle through predefined styles
+
+  return {
+    id: `flower-${index}`,
+    src: flowerTypes[typeIndex],
+    alt: `Animated flower type ${typeIndex + 1}`,
+    className: `${style.size} ${style.rotate} transform`,
+    style: { top: style.top, left: style.left, position: 'absolute' as const },
+  };
+});
+
+
 export default function HomePage() {
   const {
     hiveLevel: contextHiveLevel,
@@ -46,9 +83,7 @@ export default function HomePage() {
         <TopResourceDisplay />
 
         <ScrollArea className="flex-1">
-          {/* Main content area: Pushes content (hive) to the bottom and adds padding */}
           <main className="flex flex-col items-center justify-end p-4 pb-8 min-h-[calc(100%-100px)] relative">
-            {/* Increased margin-top to move the hive further down */}
             <div className="text-center mt-12">
               <div className="relative inline-block">
                 <Image
@@ -60,7 +95,6 @@ export default function HomePage() {
                   data-ai-hint="cartoon beehive"
                   priority
                 />
-                {/* Info card positioned relative to the hive image */}
                 <div className="absolute top-1 -right-2 p-2 text-on-image-bg space-y-1 rounded-md max-w-[150px] text-xs shadow-lg">
                   <div className="flex items-center gap-1">
                     <Users className="h-3 w-3 text-yellow-300" />
@@ -76,6 +110,23 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
+
+            {/* Flower Container */}
+            <div className="relative w-full h-32 mt-4"> {/* Adjust height (h-32) and margin-top (mt-4) as needed */}
+              {flowersData.map(flower => (
+                <Image
+                  key={flower.id}
+                  src={flower.src}
+                  alt={flower.alt}
+                  width={50} // Default width, overridden by className
+                  height={50} // Default height, overridden by className
+                  className={flower.className}
+                  style={flower.style}
+                  unoptimized={true} // Important for GIFs to preserve animation
+                  data-ai-hint="animated flower"
+                />
+              ))}
+            </div>
           </main>
         </ScrollArea>
 
@@ -90,4 +141,3 @@ export default function HomePage() {
     </div>
   );
 }
-
