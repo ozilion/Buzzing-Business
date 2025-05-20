@@ -12,7 +12,6 @@ import { Users, Home as HomeIcon } from 'lucide-react';
 import {
   INITIAL_WORKER_BEES,
   INITIAL_HIVE_LEVEL,
-  INITIAL_HONEY_PRICE, // Assuming this is also used for initial honey production rate display if needed
 } from '@/lib/constants';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatLargeNumber } from '@/lib/utils';
@@ -56,8 +55,8 @@ const flowersData = Array.from({ length: 18 }).map((_, index) => {
   };
 });
 
-// Adjusted HIVE_POINT: 25px left, 15px down from hive center (approximated from previous 175,380)
-const HIVE_POINT = { x: 150, y: 395 };
+// Adjusted HIVE_POINT: Calculated to be ~25px left, ~15px down from hive.png center
+const HIVE_POINT = { x: 169, y: 449 };
 
 // Potential flower target points for the bee (pixel coordinates relative to main container)
 const POTENTIAL_FLOWER_TARGETS = [
@@ -73,9 +72,8 @@ const STAY_DURATION = 2000;   // 2 seconds at flower/hive
 // Helper function to get N unique random elements from an array
 function getRandomUniqueElements<T>(arr: T[], numElements: number): T[] {
   if (numElements > arr.length) {
-    // Fallback: if requesting more elements than available, return a shuffled version of the whole array
     const shuffledAll = [...arr].sort(() => 0.5 - Math.random());
-    return shuffledAll.slice(0, arr.length); // Return all elements shuffled
+    return shuffledAll.slice(0, arr.length);
   }
   const shuffled = [...arr].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, numElements);
@@ -101,39 +99,33 @@ export default function HomePage() {
   const generateNewFlightPath = useCallback(() => {
     const randomFlowers = getRandomUniqueElements(POTENTIAL_FLOWER_TARGETS, 3);
     setCurrentFlightPath([HIVE_POINT, ...randomFlowers]);
-    setCurrentPathIndex(0); // Start new path from hive
-    setBeePosition(HIVE_POINT); // Ensure bee is visually at hive for new path start
-    initialHivePauseDoneRef.current = false; // Reset for the new path's initial hive pause
+    setCurrentPathIndex(0); 
+    setBeePosition(HIVE_POINT); 
+    initialHivePauseDoneRef.current = false; 
   }, []);
 
   useEffect(() => {
-    generateNewFlightPath(); // Generate initial path
+    generateNewFlightPath(); 
   }, [generateNewFlightPath]);
 
   useEffect(() => {
-    if (currentFlightPath.length === 0) return; // Path not yet generated
+    if (currentFlightPath.length === 0) return; 
 
     const targetPosition = currentFlightPath[currentPathIndex];
     setBeePosition(targetPosition);
 
     let delay;
     if (currentPathIndex === 0 && !initialHivePauseDoneRef.current) {
-      // This is the initial pause at the hive for the current path
       delay = STAY_DURATION;
-      initialHivePauseDoneRef.current = true; // Mark initial pause as done for this path
+      initialHivePauseDoneRef.current = true; 
     } else {
-      // Flight time + stay time at a flower, or flight time back to hive (which will trigger new path generation)
       delay = FLIGHT_DURATION + STAY_DURATION;
     }
 
     const timer = setTimeout(() => {
       const nextIdx = (currentPathIndex + 1) % currentFlightPath.length;
       if (nextIdx === 0) {
-        // Bee has completed a tour (visited all flowers in currentFlightPath)
-        // and is scheduled to go back to the hive (index 0 of currentFlightPath).
-        // After this move (handled by the setBeePosition above for currentPathIndex),
-        // it will be at the hive. So, for the *next cycle starting from the hive*, generate a new path.
-        generateNewFlightPath(); // This will reset currentPathIndex to 0 and set a new path.
+        generateNewFlightPath(); 
       } else {
         setCurrentPathIndex(nextIdx);
       }
@@ -232,3 +224,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+    
